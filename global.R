@@ -20,15 +20,17 @@ clickPos <- FALSE
 
 
 annot <- new.env()
-load("/shares/CIBIO-Storage/CIBIO/sharedRL/Projects/MotifsData/MasterMotifs_20181017.RData",envir = annot)
+load("/shares/CIBIO-Storage/BCGLAB/ddalfovo/data/MasterMotifs_20181017.RData",envir = annot)
 # DEFAULT
 # encodeFolder = "/shares/CIBIO-Storage/CO/elaborazioni/sharedCO/Characterization_SNP1376350/ENCODE/"
 encodeFolder = "/shares/CIBIO-Storage/BCGLAB/ddalfovo/consensus/"
 TBA_folder = "/shares/CIBIO-Storage/BCGLAB/ddalfovo/"
+inputFolder = "/shares/CIBIO-Storage/BCGLAB/ddalfovo/"
+
 dasServer="http://genome.ucsc.edu/cgi-bin/das/hg19/dna"
 defaultGene = "BRCA2"
 elements <- c("chr7","139,424,940","141,784,100")
-hg19 = fread(paste0(TBA_folder,"hg19.chrom.bed"),data.table = F)
+hg19 = fread(paste0(inputFolder,"data/hg19.chrom.bed"),data.table = F)
 
 # Ensembl data
 seqlevelsStyle(EnsDb.Hsapiens.v75) <- "UCSC"
@@ -107,7 +109,7 @@ list.depth <- function(this, thisdepth = 0) {
 }
 
 ### COUNT PFM ###
-load("/shares/CIBIO-Storage/BCGLAB/ddalfovo/countPFMS.RData")
+load(paste0(inputFolder,"data/countPFMS.RData"))
 minCount = 100
 # Load all the tissue consensus available. NOT USED, instead I decided to use the cell line consensus mapping
 # tissueDF = tissueAvailability(tissue,c('narrow','broad'),c('promoter','active','enhancer'))
@@ -121,7 +123,7 @@ minCount = 100
 # TnTGenome(ensGeneTrack, view.range = gene[gene$symbol == "BRCA2"][1] * .7)
 
 loadSNPs <- function(elements,window_load){
-  snps.filtered = system(paste0("tabix ",TBA_folder,"dbSNP_v151_hg19/dbSNP_151_hg19_complete_TOPMED_ALL.bed.gz ",gsub("chr","",elements[1]),":",window_load[1],"-",window_load[2]),intern = T)
+  snps.filtered = system(paste0("tabix ",inputFolder,"dbSNP_v151_hg19/dbSNP_151_hg19_complete_TOPMED_ALL.bed.gz ",gsub("chr","",elements[1]),":",window_load[1],"-",window_load[2]),intern = T)
   snps.filtered = data.frame(do.call(rbind, strsplit(snps.filtered, "\t", fixed=TRUE)))
   
   ir <- IRanges(start = as.numeric(as.character(snps.filtered$X2)), width = 1)

@@ -51,7 +51,7 @@ mappingInput <- function(consensus,peaks) {
 
 
 # TISSUES consensus for all ENCODE (the list in the bcglab DB)
-mapping = fread(paste0(encodeFolder,"mapping_cellLines.csv"),data.table = F)
+mapping = fread(paste0(inputFolder,"consensus/mapping_cellLines.csv"),data.table = F)
 mapping$name = gsub("'","",mapping$name)
 mapping$name = gsub(" ","_",mapping$name)
 mapping$name = gsub("/","_",mapping$name)
@@ -61,7 +61,7 @@ tissue = sort(unique(mapping$tissue))
 tissueOG = tissue[-grep("/",tissue)]
 
 # CELL-LINES consensus (list of cell-lines available) for narrow and broad peaks
-narrow_cell = fread(paste0(encodeFolder,"narrowPeaks/dataTableNoReplicates.tsv"),data.table = F)
+narrow_cell = fread(paste0(inputFolder,"consensus/narrowPeaks/dataTableNoReplicates.tsv"),data.table = F)
 narrow_cell$Biosample.term.name = gsub(" ","_",narrow_cell$Biosample.term.name)
 narrow_cell$tissueMapped = mapping[match(narrow_cell$Biosample.term.name,mapping$name),"tissue"]
 narrow_cell = unique(narrow_cell[,c("Biosample.term.name","tissueMapped")])
@@ -72,7 +72,7 @@ res=lapply(1:length(split_multiTissue),function(x){
 })
 narrow_cell = rbind(narrow_cell[-idx,],do.call(rbind,res))
 
-broad_cell = fread(paste0(encodeFolder,"broadPeaks/dataTableNoReplicates.tsv"),data.table = F)
+broad_cell = fread(paste0(inputFolder,"consensus/broadPeaks/dataTableNoReplicates.tsv"),data.table = F)
 broad_cell$Biosample.term.name = gsub(" ","_",broad_cell$Biosample.term.name)
 broad_cell$tissueMapped = mapping[match(broad_cell$Biosample.term.name,mapping$name),"tissue"]
 broad_cell = unique(broad_cell[,c("Biosample.term.name","tissueMapped")])

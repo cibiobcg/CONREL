@@ -3,13 +3,13 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
   incProgress(incStep/nrow(loadDF),detail = "Loading global consensus regions")
   # gCons = fread(paste0(encodeFolder,loadDF[i,1],"Peaks/globalConsensus/",loadDF[i,2],".union.bed"),data.table = F)
   # gCons = gCons[gCons$V1==elements[1],]
-  gCons = system(paste0("tabix ",encodeFolder,loadDF[i,1],"Peaks/bgz_globalConsensus/",loadDF[i,2],".union.bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
+  gCons = system(paste0("tabix ",inputFolder,"consensus/",loadDF[i,1],"Peaks/bgz_globalConsensus/",loadDF[i,2],".union.bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
   gCons = data.frame(do.call(rbind, strsplit(gCons, "\t", fixed=TRUE)))
   if(nrow(gCons)==0){
     generateEmptyTrack(elements[1])
   } else {
     if(length(input$tba)>0){
-      tba = system(paste0("tabix ",TBA_folder,"TBA_consensus/global_TBA/",loadDF[i,2],".",loadDF[i,1],".bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
+      tba = system(paste0("tabix ",inputFolder,"TBA_consensus/global_TBA/",loadDF[i,2],".",loadDF[i,1],".bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
       tba_split = lapply(strsplit(tba, "\t", fixed=TRUE),function(x)if(length(x)<9){c(x,"")}else{x})
       tba = data.frame(do.call(rbind, tba_split),stringsAsFactors = F)
       for(pvalue in input$pvalues) {

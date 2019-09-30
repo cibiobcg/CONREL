@@ -5,7 +5,7 @@ tx_cCons = lapply(1:nrow(loadDF),function(i){
   incProgress(incStep/nrow(loadDF),detail = "Loading cell-lines consensus regions")
   # cCons = fread(paste0(encodeFolder,loadDF[i,1],"Peaks/consensus/",as.character(loadDF[i,2])),data.table = F)
   # cCons = cCons[gCons$V1==elements[1],]
-  cCons = system(paste0("tabix ",encodeFolder,loadDF[i,1],"Peaks/bgz_consensus/",as.character(loadDF[i,2])," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
+  cCons = system(paste0("tabix ",inputFolder,"consensus/",loadDF[i,1],"Peaks/bgz_consensus/",as.character(loadDF[i,2])," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
   cCons = data.frame(do.call(rbind, strsplit(cCons, "\t", fixed=TRUE)))
   if(nrow(cCons)==0){
     generateEmptyTrack(elements[1])

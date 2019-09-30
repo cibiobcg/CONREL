@@ -1,5 +1,4 @@
 source("./global.R")
-if(simpleDebug){print("Start UI")}
 
 ui <- dashboardPagePlus(
   collapse_sidebar = FALSE,enable_preloader = TRUE,loading_duration = 2,
