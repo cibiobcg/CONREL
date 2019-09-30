@@ -1,3 +1,3 @@
 # Genome Browser in shiny; Using TnT package (fork ddalfovo/Tnt)
 
-The project is avaiable at bcglab.cibio.unitn.it:8080 and containerized in a Singularity image
+The project is avaiable at [bcglab.cibio.unitn.it:8080](bcglab.cibio.unitn.it:8080) and containerized in a Singularity image (download from the bcglab server)
