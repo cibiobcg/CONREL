@@ -4,6 +4,10 @@ observeEvent(input$tooltipTable, {
   df = data.frame(label = tooltip[names(tooltip)=="label"],
                   value = tooltip[names(tooltip)%in%c("value","value1")])
   # df = as.data.frame(do.call(rbind,split(input$tooltipTable,sort(rep(1:(length(input$tooltipTable)/2),2)))))
+  df = datatable(df,selection = 'none',rownames = FALSE,
+                 options = list(paging = FALSE,
+                                searching = FALSE,
+                                dom="t"))
   tooltipDF(df) # set reactiveVal to new value
 })
 
