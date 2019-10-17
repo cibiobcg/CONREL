@@ -53,7 +53,16 @@ server <- function(input, output, session) {
     ################
     
     source(file.path("observer", "download.R"),  local = TRUE)$value
-    
+    output$downloadData <- downloadHandler(
+      filename = function() {
+        paste('container.simg', sep='')
+      },
+      content = function(con) {
+        file.copy("/shares/CIBIO-Storage/CIBIO/sharedRL/Projects/genomeBrowser/source/container/genomeBrowser.tar", con)
+      },
+      contentType = "application/zip"
+    )
+
     
     #################
     ### RENDERING ###

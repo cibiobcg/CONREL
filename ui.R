@@ -27,7 +27,8 @@ ui <- dashboardPagePlus(
                 menuItemOutput("outGenome"),
                 # hr(),uiOutput("seq_link"),
                 # downloadButton('download',"Download the data",style="color: #fff; background-color: #006502; border-color: #2e6da4"),
-                menuItemOutput("link")
+                menuItemOutput("link"),hr(),
+                menuItem("Download App", tabName = "singularity", icon = icon("box-open"))
     )
   ),
   
@@ -137,6 +138,25 @@ ui <- dashboardPagePlus(
                                        boxPlus(width = 12,title = "Region info:",collapsible = T,closable = F,
                                                dataTableOutput("tTable")
                                        ))
+                    )
+                  ),
+                  tabItem(
+                    tabName = "singularity",
+                    fluidPage(
+                      width = 12,
+                      h1("Download singularity image"),hr(),
+                      h2("Download"),
+                      p("Download a singuarity image to run this shiny app on your local server."),
+                      p("Download link:    ",downloadLink('downloadData', 'shiny.simg')," 17 Oct 2019 (~30GB)"),hr(),
+                      h2("Instruction"),
+                      h4("1. Unpack TAR archive"),
+                      box(width=12,"tar -xvf genomeBrowser.tar"),
+                      h4("2. Prepare shiny-server configuration file"),
+                      p("")
+                      # tags$div(tags$ul(
+                      #   tags$li("test1"),
+                      #   tags$li("test2"),
+                      #   tags$li("test3")),  style = "font-size: 15px")
                     )
                   )
                 )
