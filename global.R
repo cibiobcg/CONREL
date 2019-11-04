@@ -54,6 +54,7 @@ window2Load <- function(elements){
 
 # data.frame for tooltip. It is empty at the beginning beacause otherwise an error will be print
 df_tooltip = NULL
+df_tba = NULL
 trackOut = TnT::BlockTrack(GRanges("chr1",IRanges(0,1)),
                            color = "#EEEEEE",background = "#EEEEEE",
                            height = 15,label=NULL)
@@ -111,7 +112,7 @@ list.depth <- function(this, thisdepth = 0) {
 
 ### COUNT PFM ###
 load(paste0(inputFolder,"data/countPFMS.RData"))
-minCount = 100
+minCount = 50
 # Load all the tissue consensus available. NOT USED, instead I decided to use the cell line consensus mapping
 # tissueDF = tissueAvailability(tissue,c('narrow','broad'),c('promoter','active','enhancer'))
 # tissueDF$tissue = unlist(lapply(tissueDF$listFiles,function(x)strsplit(as.character(x),"\\.")[[1]][1]))

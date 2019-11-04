@@ -1,5 +1,6 @@
 # Observer that generates the Composite track by gene selection
 observeEvent(input$searchGenes, ignoreInit = T,{
+  source(file.path("scripts", "tab.R"),  local = TRUE)$value
   clickGene <<- TRUE
   if(simpleDebug){print("View genome tab")}
   source(file.path("scripts", "genomeMenu.R"),  local = TRUE)$value

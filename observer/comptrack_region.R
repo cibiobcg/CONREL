@@ -1,5 +1,6 @@
 # Observer that generates the Composite track by position
 observeEvent(input$Run, ignoreInit = T,{
+  source(file.path("scripts", "tab.R"),  local = TRUE)$value
   clickPos <<- TRUE
   if(simpleDebug){print("View genome tab")}
   source(file.path("scripts", "genomeMenu.R"),  local = TRUE)$value

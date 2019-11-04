@@ -10,6 +10,8 @@ server <- function(input, output, session) {
     # The tooltip are disable. Instead the click on a region trigger an event that generates a
     # data.frame and it is rendered below the track
     tooltipDF = reactiveVal(df_tooltip)
+    # Same for tba table
+    tbaDF = reactiveVal(df_tba)
     # Observer that listens to changes in tooltip (click on a regions, Shiny.onInputChange() in javascript)
     source(file.path("observer", "tooltip.R"),  local = TRUE)$value
     
@@ -55,7 +57,7 @@ server <- function(input, output, session) {
     source(file.path("observer", "download.R"),  local = TRUE)$value
     output$downloadData <- downloadHandler(
       filename = function() {
-        paste('container.simg', sep='')
+        paste('genomeBrowser_v1.tar', sep='')
       },
       content = function(con) {
         file.copy("/shares/CIBIO-Storage/CIBIO/sharedRL/Projects/genomeBrowser/source/container/genomeBrowser.tar", con)
@@ -73,6 +75,14 @@ server <- function(input, output, session) {
         options = list(paging = FALSE,
                        searching = FALSE,
                        dom="t")
+    )
+    
+    # Rendering of data.frame tba
+    output$tbaTable = renderDataTable(
+      tbaDF()
+      # options = list(paging = TRUE,
+      #                searching = TRUE)
+      #                # dom="t")
     )
     
     # Rendering of the tree for cell-line consensus

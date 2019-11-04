@@ -22,8 +22,11 @@ observeEvent(input$sideBar, {
     showModal(
       modalDialog(title = "Download data",easyClose = T,align="center",
                   conditionalPanel(condition = 'input.tooltipTable !== undefined',
-                                   downloadButton('downloadTab',"Download the 'Region info' displayed",class = "asdasd")),
-                              hr(),
+                                   downloadButton('downloadTab',"Download the 'Region info' displayed",class = "asdasd"),
+                                   hr(),
+                                   downloadButton('downloadTBA',"Download the 'TBA info' displayed",class = "asdasd")
+                                   ),
+                  hr(),
                   disabled(downloadButton('downloadAll',"Download all infos of the region visualized")))
     )
     updateTabItems(session,"sideBar",selected = "empty")

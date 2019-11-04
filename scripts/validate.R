@@ -56,9 +56,9 @@ validateInput <- function(input) {
   if("tissue" %in% input$consensus & length(input$tissue)==0){
     output = append(output,"- Please select at least one tissue, or deselect 'Tissue consensus regions'")
   }
-  if("tba" %in% input$tba & length(input$pvalues)==0){
-    output = append(output,"- Please select at least one level of statistical significance, or deselect 'TBA'")
-  }
+  # if("tba" %in% input$tba & length(input$pvalues)==0){
+  #   output = append(output,"- Please select at least one level of statistical significance, or deselect 'TBA'")
+  # }
   if(!is.null(output)){
     output = append("\nAt least 1 error has occured in Input data!",output)
   }
