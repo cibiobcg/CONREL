@@ -3,7 +3,7 @@ validateRegion <- function(input,reset=F) {
   output=NULL
   if(!grepl(paste0("^chr([1-9]|1[0-9]|2[0-2]|[MXY]):[0-9,]*-[0-9,]*$"),input$region)){
     output = append(output,"- Please provide a region in valid format.\ne.g. chr7:139424940-141784100")
-  } else{
+  } else {
     el = convertPosition(input$region,TRUE)
     chr = elements[1]
     start = as.numeric(el[2])

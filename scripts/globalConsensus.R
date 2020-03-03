@@ -1,4 +1,14 @@
 loadDF = mappingInput(input$regElement,input$peaks)
+minCount = input$minCount
+if(minCount<1){
+  minCount = 1
+}
+fractionMotifsAssoc = input$fractionMotifsAssoc
+if (fractionMotifsAssoc > 1) {
+  fractionMotifsAssoc = 1
+} else if(fractionMotifsAssoc<0){
+  fractionMotifsAssoc = 0
+}
 tx_gCons = lapply(1:nrow(loadDF),function(i){
   incProgress(incStep/nrow(loadDF),detail = "Loading global consensus regions")
   # gCons = fread(paste0(encodeFolder,loadDF[i,1],"Peaks/globalConsensus/",loadDF[i,2],".union.bed"),data.table = F)
@@ -25,8 +35,8 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
           fract_1000GP = gsub(")","",unlist(lapply(strsplit(row,"/")[[1]],function(split){strsplit(split,"\\(")[[1]][2]})))
           # paste0(paste0(annot$annot[pfms[!countPFMS[pfms]<minCount],"GeneSymbol"],"-",
           #               fract_1000GP[!countPFMS[pfms]<minCount]),collapse = "/")
-          load(paste0("/shares/CIBIO-Storage/BCGLAB/ddalfovo/data/motifs_CountsFreq_Global/",loadDF[i,2],".",loadDF[i,1],".counts_freq.RData"))
-          validPFMS = countPFMS[pfms]>=minCount & table[,pvalue_col-1][pfms]<=0.50
+          load(paste0(inputFolder,"data/motifs_CountsFreq_Global/",loadDF[i,2],".",loadDF[i,1],".counts_freq.RData"))
+          validPFMS = countPFMS[pfms]>=minCount & table[,pvalue_col-1][pfms]<=fractionMotifsAssoc
           paste0(paste0(paste0(annot$annot[pfms[validPFMS],"GeneSymbol"]," (",annot$annot[pfms[validPFMS],"Code"],")"),collapse="/"),"%",
                  paste0(fract_1000GP[validPFMS],collapse = "/"))
         })))

@@ -1,5 +1,5 @@
-observeEvent(input$sideBar, {
-  if(input$sideBar == "dna") {
+observeEvent(input$dna, {
+  # if(input$sideBar == "dna") {
     updateTabItems(session, "sideBar", "genome")
     showModal(
       modalDialog(title = "DNA sequence",easyClose = T,align="center",
@@ -16,8 +16,8 @@ observeEvent(input$sideBar, {
                   )
     )
     updateTabItems(session,"sideBar",selected = "empty")
-  }
-  if(input$sideBar == "dl") {
+  })
+observeEvent(input$dl, {
     updateTabItems(session, "sideBar", "genome")
     showModal(
       modalDialog(title = "Download data",easyClose = T,align="center",
@@ -30,5 +30,4 @@ observeEvent(input$sideBar, {
                   disabled(downloadButton('downloadAll',"Download all infos of the region visualized")))
     )
     updateTabItems(session,"sideBar",selected = "empty")
-  }
-})
+  })

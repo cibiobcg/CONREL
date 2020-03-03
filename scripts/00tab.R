@@ -23,7 +23,7 @@ insertUI(
   selector = "#placeholder",
   where = "afterEnd",
   ui = tags$div(
-    boxPlus(width = 12,title = "Region info:",collapsible = T,closable = F,
+    boxPlus(width = 12,collapsible = T,closable = F,title="Info:",
             dataTableOutput("tTable")),
     id="regionTab"
   )

@@ -1,4 +1,14 @@
 loadDF = tissueAvailability(input$tissue,input$peaks,input$regElement)
+minCount = input$minCount
+if(minCount<1){
+  minCount = 1
+}
+fractionMotifsAssoc = input$fractionMotifsAssoc
+if (fractionMotifsAssoc > 1) {
+  fractionMotifsAssoc = 1
+} else if(fractionMotifsAssoc<0){
+  fractionMotifsAssoc = 0
+}
 tx_tCons = lapply(1:nrow(loadDF),function(i){
   splitFileName = strsplit(as.character(loadDF[i,2]),"\\.")[[1]]
   incProgress(incStep/nrow(loadDF),detail = "Loading tissue consensus regions")
@@ -30,8 +40,10 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
           fract_1000GP = gsub(")","",unlist(lapply(strsplit(row,"/")[[1]],function(split){strsplit(split,"\\(")[[1]][2]})))
           # paste0(paste0(annot$annot[pfms[!countPFMS[pfms]<minCount],"GeneSymbol"],"-",
           #               fract_1000GP[!countPFMS[pfms]<minCount]),collapse = "/")
-          paste0(paste0(annot$annot[pfms[!countPFMS[pfms]<minCount],"GeneSymbol"],collapse="/"),"%",
-                 paste0(fract_1000GP[!countPFMS[pfms]<minCount],collapse = "/"))
+          load(paste0(inputFolder,"data/motifs_CountsFreq_Tissue/",gsub(".bed.gz",".counts_freq.RData",gsub("union",loadDF[i,1],as.character(loadDF[i,2])))))
+          validPFMS = countPFMS[pfms]>=minCount & table[,pvalue_col-1][pfms]<=fractionMotifsAssoc
+          paste0(paste0(paste0(annot$annot[pfms[validPFMS],"GeneSymbol"]," (",annot$annot[pfms[validPFMS],"Code"],")"),collapse="/"),"%",
+                 paste0(fract_1000GP[validPFMS],collapse = "/"))
         })))
       }
       colnames(tCons) = c(colnames(tCons)[1:3],paste0("TBA_pvalue<",input$pvalues))

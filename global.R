@@ -14,19 +14,36 @@ library(GenomicFeatures)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(EnsDb.Hsapiens.v75)
 options(scipen = 999)
+options(shinyTree.refresh = TRUE)
 
 simpleDebug = TRUE
 clickGene <- FALSE
 clickPos <- FALSE
 
+# convertMenuItem <- function(mi,tabName) {
+#   mi$children[[1]]$attribs['data-toggle']="tab"
+#   mi$children[[1]]$attribs['data-value'] = tabName
+#   if(length(mi$attribs$class)>0 && mi$attribs$class=="treeview"){
+#     mi$attribs$class=NULL
+#   }
+#   mi
+# }
+# modify_stop_propagation <- function(x) {
+#   x$children[[2]]$attribs$class = "block-menuCustom menu-open"
+#   x$children[[2]]$attribs$style = "display: block; list-style: none;"
+#   x
+# }
+
+# base_path = "/media/davide/data/BCGLAB/ddalfovo/"
+base_path = "/shares/CIBIO-Storage/BCGLAB/CONREL/"
 
 annot <- new.env()
-load("/shares/CIBIO-Storage/BCGLAB/ddalfovo/data/MasterMotifs_20181017.RData",envir = annot)
+load(paste0(base_path,"data/MasterMotifs_20181017.RData"),envir = annot)
 # DEFAULT
 # encodeFolder = "/shares/CIBIO-Storage/CO/elaborazioni/sharedCO/Characterization_SNP1376350/ENCODE/"
-encodeFolder = "/shares/CIBIO-Storage/BCGLAB/ddalfovo/consensus/"
-TBA_folder = "/shares/CIBIO-Storage/BCGLAB/ddalfovo/"
-inputFolder = "/shares/CIBIO-Storage/BCGLAB/ddalfovo/"
+encodeFolder = paste0(base_path,"consensus/")
+TBA_folder = base_path
+inputFolder = base_path
 
 dasServer="http://genome.ucsc.edu/cgi-bin/das/hg19/dna"
 defaultGene = "BRCA2"
@@ -68,13 +85,27 @@ convertPosition <- function(input,v=TRUE){
   return(input)
 }
 
-source("scripts/validate.R")
+# source("scripts/validate.R")
 source("scripts/consensus.R")
 
 generateEmptyTrack <- function(chr){
   return(TnT::BlockTrack(GRanges(chr,IRanges(0,1)),
                                color = "#EEEEEE",background = "#EEEEEE",
                                height = 15,label=NULL))
+}
+
+checkValidRegion <- function(region) {
+  elements <- convertPosition(region,TRUE)
+  window_load = window2Load(elements)
+  start_geneView = window_load[1]
+  end_geneView = window_load[2]
+  chr_geneView = elements[1]
+  gene <- genes(EnsDb.Hsapiens.v75,
+                filter=AnnotationFilterList(GeneStartFilter(start_geneView,condition = '>'),
+                                            GeneEndFilter(end_geneView,condition = '<'),
+                                            SeqNameFilter(chr_geneView),
+                                            logicOp = c('&','&')))
+  return(length(gene)==0)
 }
 
 consensusColor <- function(consensus,peak){

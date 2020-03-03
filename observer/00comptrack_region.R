@@ -65,6 +65,7 @@ observeEvent(input$Run, ignoreInit = T,{
     if('global' %in% input$consensus) {
       if(simpleDebug){print("Load global consensus")}
       source(file.path("scripts", "globalConsensus.R"),  local = TRUE)$value
+      
       tx = append(tx,tx_gCons)
     }
     if('tissue' %in% input$consensus) {
@@ -87,4 +88,5 @@ observeEvent(input$Run, ignoreInit = T,{
                              coord.range = IRanges(window_load[1],window_load[2]))
     track(trackRendered)
   })
+  
 })

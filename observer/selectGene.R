@@ -3,5 +3,5 @@
 observeEvent(input$selectData, {
   updateSelectizeInput(session, "genes",
                        choices = as.character(genesEns$gene_symbol),
-                       server = TRUE)
+                       server = TRUE,selected = NULL)
 })

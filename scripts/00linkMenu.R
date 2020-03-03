@@ -5,6 +5,6 @@ output$link <- renderMenu({
            menuSubItem("Download data", tabName = "dl", icon = icon("download")),
            # This for deselect when DNA or DL are selected. In this way you can click ultiple times on the same Item
            conditionalPanel(condition='input.menu == "hidden"',menuSubItem(NULL, tabName = "empty"))
-                       # downloadButton('download',"Download the data",style="color: #fff; background-color: #006502; border-color: #2e6da4")
+           # downloadButton('download',"Download the data",style="color: #fff; background-color: #006502; border-color: #2e6da4")
   )
 })

@@ -1,0 +1,73 @@
+<p>The help contains all the information about how to use CONREL's website.</p>
+
+<h2><b>What is CONREL</b></h2>
+CONREL is a web-based genome browser that enables the exploration of consensus regulatory elements (CREs) across the human genome and provides an exhaustive annotation of transcription factors with enriched TBAs across all annotated CREs. While CREs allows to better characterize regulatory elements that are conserved among different experiments, cell-lines and tissues, the TBA approach allows to measure the overall one-to-one relationship between a TF and a CRE.
+
+<h3><b>Starting point</b></h3>
+<p>To specify your desired inputs you have to use the input form at the CONREL search page.
+</p>
+
+<h3><b>Search page</b></h3>
+<p>You can search CONREL by using chromosome coordinates or by gene name.<br><br>
+
+The accepted format for the genome coordinates is <i>chrN:startPosition-endPosition</i> (e.g. chr11:1297556-1349042 or chr4:11,524,330-11,787,112).<br><br>
+
+The gene can be selected from a list or typing the name inside the relative input field (an autocompletion mechanism will filter the results to help you).
+<br><br>
+<img src="./search.png" width="75%">
+
+</p>
+<h3><b>Setting page</b></h3>
+<p>In the settings page you can change the parameters that influence the output. You can choose which tracks you want to visualize and add optional tracks.<br>
+<b>NOTE</b> that some parameters are required and some are optional.<br><br>
+
+Under <i>Visualization</i> you can select the level of details for the genome browser. You can choose between:</p>
+<ul>
+  <li><i>Gene</i> displays regions that include both protein-coding genes and non-coding RNA genes</li>
+  <li><i>Transcript</i> displays transcripts and their stucture (exons, coding sequence) for both protein-coding genes and non-coding RNA genes</li>
+</ul>
+
+<br>
+<h4><b>Required parameters</b></h4>
+
+<p>Under <i>peaks call format</i> you can select the consensus regulatory elements generated using the Narrow peaks dataset and/or the Broad peaks dataset as defined by the <a href="https://www.encodeproject.org" target="_blank">ENCODE</a> consortium.
+</p>
+
+<br>
+<p>In <i>Consensus regulatory element</i> setting you can select which type of CRE (among: promoter, enhancer and active enhancer) you want to visualize</p>
+
+<br>
+<p>The <i>Consensus region tracks</i> setting permits you to visualize the consensus regolatory elements at different level of abstraction. You can choose between:</p>
+<ul>
+  <li><i>Global</i> displays the CREs generated combining all cell lines. It provides an overall landscape</li>
+  <li><i>Tissue</i> displays the CREs generated combining the cell lines originated from the same tissue</li>
+  <li><i>Cell line</i> displays the CREs generated combining replicates and experiments for the same cell line</li>
+</ul>
+<p><b>NOTE</b> that the lists of tissues and the tree of cell-lines are built based on the peak format selected. A different list of tissues and cell lines was available for Narrow and Broad peaks format. Then, selecting Narrow peak, Broad peak or both will provide a different list of tissue and cell line consensus regions. Thus, changing the peak format it will reset both tissue and cell line selections.
+<br><br>
+<img src="./setting1.png" width="75%">
+</p>
+<h4><b>Optional parameters</b></h4>
+<p>The <i>SNP track</i> displays all the single-nucleotide variants with a MAF greater or equal to 0.01 from <i>dbSNP v151</i></p>
+
+<br>
+<p>The <i>TBA information</i> display the Total Binding Affinity of a regulatory region for a specific TF.<br>NOTE that the TBA is available only for global and tissue consensus regions.</p>
+
+<br>
+<p>The <i>Motifs count cutoff</i> puts a threshold on the number of aligned sequences used to built a TF motif. This is an option to limit the number of TF motifs in your output.<br>
+A motif is usually derived from a set of aligned sequences. Lower count means lower sequences that supports a specific motif. This option excludes all the motifs with count (sequences aligned) below than threshold.
+</p>
+
+<br>
+<p>The <i>Fraction motifs cutoff</i> puts a threshold on the fraction of regions with a significant TBA score for a specific motif. This is an option to limit the number of TF motifs in your output.<br>
+This option excludes all the motifs that are enriched in TBA score in more regions (expressed as fraction over all the regions of the corresponding consensus) than the threshold provided.
+<br><br>
+<img src="./setting2.png" width="75%">
+</p>
+
+<h3><b>Browser page</b></h3>
+<p>Due to computational restriction, the genome browser will be loaded within a window of <span>&#177;</span>1Mb before and after the chromosome coordinates or the gene selected.<br>
+The genome browser window can be navigated. Clicking on a region/variant/gene/trascript gives several informations about it into table format that can be copied or downloaded using different file formats.
+<br><br>
+<img src="./browser.png" width="100%">
+</p>

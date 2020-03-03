@@ -1,0 +1,124 @@
+</br>
+<h2>Instructions</h2>
+
+</br>
+<h4>1. Unpack TAR archive</h4>
+
+<code><pre>
+tar -xvf genomeBrowser.tar
+</code></pre>
+
+</br>
+<h4>2. Prepare shiny-server configuration file</h4>
+
+<p>You will first need to generate a custom configuration for your user, and it will give you instructions for usage:</p>
+
+<code><pre>
+$ /bin/bash prepare_conf.sh
+
+
+Steps:
+  ----------------------------------------------------------------------
+  1. Use this script to prepare your shiny-server.conf (configuration)
+
+  /bin/bash prepare_template.sh
+
+  ----------------------------------------------------------------------
+  2. If needed, you can provide the following arguments
+
+  Commands:
+    help: show help and exit
+    start: the generation of your config
+
+  Options:
+    --port:  the port for the application (e.g., shiny default is 3737)
+    --user:  the user for the run_as directive in the shiny configuration
+    --base: base folder with applications
+    --logs: temporary folder with write for logs (not required)
+    --disable-index: disable directory indexing
+
+  ----------------------------------------------------------------------
+  3. Make sure Singularity is loaded, and run the container using
+    the commands shown by the template.
+</code></pre>
+
+<p>When you add 'start' it will do the generation. Here we don't supply any arguments so that they are randomly generated.</p>
+
+<code><pre>
+$ /bin/bash prepare_template.sh start
+
+
+Generating shiny configuration...
+port: 9870
+logs: /tmp/shiny-server.gG1X2Z
+base: /srv/shiny-server/shiny_genomeBrowser
+Server logging will be in /tmp/shiny-server.gG1X2Z
+
+To run your server:
+
+  module load singularity/2.4.6
+  singularity run --bind /tmp/shiny-server.gG1X2Z/logs:/var/log/shiny \ 
+  --bind /tmp/shiny-server.gG1X2Z/lib:/var/lib/shiny-server \ 
+  --bind shiny-server.conf:/etc/shiny-server/shiny-server.conf shiny.simg
+  ---------------------------------------------------------------------------
+
+For custom applications, also add --bind /srv/shiny-server:/srv/shiny-server
+  To see your applications, open your browser to http://127.0.0.1:9870 or
+  open a ssh connection from your computer to your cluster.")
+</code></pre>
+
+<p>The configuration is generated in your present working directory:</p>
+
+<code><pre>
+$ cat shiny-server.conf
+
+
+run_as vanessa;
+server {
+  listen 9098;
+
+  # Define a location at the base URL
+  location / {
+
+    # Host the directory of Shiny Apps stored in this directory
+    site_dir /srv/shiny-server;
+
+    # Log all Shiny output to files in this directory
+    log_dir /tmp/shiny-server.PtVRXE;
+
+    # When a user visits the base URL rather than a particular application,
+    # an index of the applications available in this directory will be shown.
+    directory_index on;
+  }
+})
+</code></pre>
+
+<p>You can also choose to disable the indexing, meaning that someone that navigates to the root of the server (at the port) won't be able to explore all of your apps.</p>
+
+<code><pre>
+$ /bin/bash prepare_template.sh --disable-index
+</code></pre>
+
+<p>You can also customize the port, temporary folder, 'run_as' user, and base (if somewhere other than /srv/shiny-server)</p>
+
+</br>
+<h4>3. Start server</h4>
+
+<p>Once you have that template, follow the instructions to run the container. The temporary folder is already created for you.</p>
+
+<code><pre>
+$ singularity run --bind /tmp/shiny-server.gG1X2Z/logs:/var/log/shiny \\ 
+  --bind /tmp/shiny-server.gG1X2Z/lib:/var/lib/shiny-server \\ 
+  --bind shiny-server.conf:/etc/shiny-server/shiny-server.conf shiny.simg
+
+[2018-04-07T00:14:17.403] [INFO] shiny-server - Shiny Server v1.5.7.890 (Node.js v8.10.0)
+[2018-04-07T00:14:17.405] [INFO] shiny-server - Using config file '/etc/shiny-server/shiny-server.conf'
+[2018-04-07T00:14:17.456] [INFO] shiny-server - Starting listener on 0.0.0.0:9870")
+</code></pre>
+
+</br>
+<h4>Custom application</h4>
+
+<p>When you run the container, if you add a bind to a folder of your own apps in /srv/shiny-server/, you can add your custom applications. The bind would look something like:</p>
+
+<code><pre>--bind /path/to/apps/folder:/srv/shiny-server</code></pre>
