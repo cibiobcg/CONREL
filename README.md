@@ -1,3 +1,4 @@
-# Genome Browser in shiny; Using TnT package (fork ddalfovo/Tnt)
+# Genome Browser in shiny;
 
-The project is avaiable at [bcglab.cibio.unitn.it:8080](http://bcglab.cibio.unitn.it:8080) and containerized in a Singularity image (download from the bcglab server)
+Webpage of the project at [bcglab.cibio.unitn.it/conrel/](http://bcglab.cibio.unitn.it/conrel/). The Genome Browser is containerized in a Singularity image - download of the image is available at the webserver.
+All the data are available inside the singularity image.
