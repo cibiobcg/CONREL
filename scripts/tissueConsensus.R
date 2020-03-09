@@ -16,16 +16,12 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
   # tCons = tCons[tCons$V1==elements[1],]
   tCons = system(paste0("tabix ",inputFolder,"consensus/",loadDF[i,1],"Peaks/bgz_tissueConsensus/",as.character(loadDF[i,2])," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
   tCons = data.frame(do.call(rbind, strsplit(tCons, "\t", fixed=TRUE)))
+  
   if(nrow(tCons)==0){
     generateEmptyTrack(elements[1])
   } else {
     if(length(input$tba)>0){
-      fileLink_1000GP = paste0(inputFolder,"../TBA_consensus/tissue_TBA_1000GP/",gsub("union",loadDF[i,1],as.character(loadDF[i,2])))
-      if(file.exists(fileLink_1000GP)){
-        tba = system(paste0("tabix ",fileLink_1000GP," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
-      } else {
-        tba = system(paste0("tabix ",inputFolder,"TBA_consensus/tissue_TBA/",gsub("union",loadDF[i,1],as.character(loadDF[i,2]))," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
-      }
+      tba = system(paste0("tabix ",inputFolder,"TBA_consensus/tissue_TBA/",gsub("union",loadDF[i,1],as.character(loadDF[i,2]))," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
       tba_split = lapply(strsplit(tba, "\t", fixed=TRUE),function(x)if(length(x)<9){c(x,"")}else{x})
       tba = data.frame(do.call(rbind, tba_split),stringsAsFactors = F)
       for(pvalue in input$pvalues) {

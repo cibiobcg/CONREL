@@ -319,14 +319,14 @@ ui <- dashboardPagePlus(
                     tabName = "singularity",
                     fluidPage(
                       width = 12,
-                      includeHTML("www/singularity_head.html"),
+                      includeHTML("www/singularity.html"),
                       # h1("Download singularity image"),
                       # br(),
                       # h2("Download"),
-                      br(),
+                      # br(),
                       # p("Download a singuarity image to run this shiny app on your local server."),
-                      p(HTML('&emsp;'),"Download link:    ",downloadLink('downloadData', 'genomeBrowser_v1.tar')," 17 Oct 2019 (~30GB)"),
-                      includeHTML("www/singularity_body.html")
+                      # p(HTML('&emsp;'),"Download link:    ",downloadLink('downloadData', 'genomeBrowser_v1.tar')," 17 Oct 2019 (~30GB)"),
+                      # includeHTML("www/singularity_body.html")
                       # br(),
                       # h2("Instructions"),
                       # br(),
