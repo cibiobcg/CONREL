@@ -18,13 +18,9 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
   if(nrow(gCons)==0){
     generateEmptyTrack(elements[1])
   } else {
+    nCells = cbind(map_Ncells_Global[map_Ncells_Global$peaks==loadDF[i,1]&map_Ncells_Global$cre==loadDF[i,2],3:4])
     if(length(input$tba)>0){
-      fileLink_1000GP = paste0(inputFolder,"../TBA_consensus/global_TBA_1000GP/",loadDF[i,2],".",loadDF[i,1],".bed.gz")
-      if(file.exists(fileLink_1000GP)){
-        tba = system(paste0("tabix ",fileLink_1000GP," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
-      } else {
-        tba = system(paste0("tabix ",inputFolder,"TBA_consensus/global_TBA/",loadDF[i,2],".",loadDF[i,1],".bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
-      }
+      tba = system(paste0("tabix ",inputFolder,"TBA_consensus/global_TBA/",loadDF[i,2],".",loadDF[i,1],".bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
       tba_split = lapply(strsplit(tba, "\t", fixed=TRUE),function(x)if(length(x)<9){c(x,"")}else{x})
       tba = data.frame(do.call(rbind, tba_split),stringsAsFactors = F)
       for(pvalue in input$pvalues) {
@@ -47,7 +43,7 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
     GRanges_gcons = makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
     FeatureTrack(
       GRanges_gcons,
-      tooltip = as.data.frame(GRanges_gcons),
+      tooltip = cbind(as.data.frame(GRanges_gcons),nCells$count),
       label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
       names = "",height = 50,color = consensusColor(loadDF[i,2],loadDF[i,1]),
       background = "#eeeeee")

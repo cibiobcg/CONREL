@@ -178,3 +178,32 @@ loadSNPs <- function(elements,window_load){
 #                .list = lapply(validateInput(input$peaks,input$regElement,input$consensus,input$tissue),
 #                               function(x)messageItem(from="Admin",message = x)))
 # })
+
+map_Ncells = fread("/shares/CIBIO-Storage/BCGLAB/CONREL/data/mapping_Ncells.csv")
+map_Ncells_Global = data.table(
+  rbind(data.table("peaks"="narrow",
+                   "cre"="promoter",
+                   "count"=sum(map_Ncells$`Narrow peaks`>=1),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1,1])),
+        data.table("peaks"="narrow",
+                   "cre"="enhancer",
+                   "count"=sum(map_Ncells$`Narrow peaks`>=2),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2,1])),
+        data.table("peaks"="narrow",
+                   "cre"="active",
+                   "count"=sum(map_Ncells$`Narrow peaks`>=3),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3,1])),
+        data.table("peaks"="broad",
+                   "cre"="promoter",
+                   "count"=sum(map_Ncells$`Broad peaks`>=1),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1,1])),
+        data.table("peaks"="broad",
+                   "cre"="enhancer",
+                   "count"=sum(map_Ncells$`Broad peaks`>=2),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2,1])),
+        data.table("peaks"="broad",
+                   "cre"="active",
+                   "count"=sum(map_Ncells$`Broad peaks`>=3),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3,1]))
+  ))
+map_Ncells_Global <- map_Ncells_Global[, list(cells=list(.SD)), by = list(peaks,cre,count)]
