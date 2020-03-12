@@ -42,6 +42,8 @@ server <- function(input, output, session) {
   tooltipDF = reactiveVal(df_tooltip)
   # Same for tba table
   tbaDF = reactiveVal(df_tba)
+  # Same for cell line list table
+  cellDF = reactiveVal(df_cell)
   # Observer that listens to changes in tooltip (click on a regions, Shiny.onInputChange() in javascript)
   source(file.path("observer", "tooltip.R"),  local = TRUE)$value
   
@@ -127,7 +129,12 @@ server <- function(input, output, session) {
     #                # dom="t")
   )
   
-
+  output$cellTable = renderDataTable(
+    cellDF()
+    # options = list(paging = FALSE,
+    #                searching = FALSE,
+    #                dom="t")
+  )
   
   # Rendering of composite track
   output$outcomp = renderTnT({

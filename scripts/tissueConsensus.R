@@ -45,6 +45,8 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
       colnames(tCons) = c(colnames(tCons)[1:3],paste0("TBA_pvalue<",input$pvalues))
       # colnames(tCons) = c(colnames(tCons)[1:3],paste0("TBA_pvalue<",c("0.1","0.05","0.01","0.001","0.0001","0.00001")))
     }
+    tCons = cbind(tCons,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"tissue"),collapse="%"))
+    colnames(tCons) = c(colnames(tCons)[1:(length(colnames(tCons))-1)],"typeCRE")
     GRanges_tcons = makeGRangesFromDataFrame(tCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
     FeatureTrack(
       GRanges_tcons,

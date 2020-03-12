@@ -72,6 +72,7 @@ window2Load <- function(elements){
 # data.frame for tooltip. It is empty at the beginning beacause otherwise an error will be print
 df_tooltip = NULL
 df_tba = NULL
+df_cell = NULL
 trackOut = TnT::BlockTrack(GRanges("chr1",IRanges(0,1)),
                            color = "#EEEEEE",background = "#EEEEEE",
                            height = 15,label=NULL)
@@ -184,26 +185,126 @@ map_Ncells_Global = data.table(
   rbind(data.table("peaks"="narrow",
                    "cre"="promoter",
                    "count"=sum(map_Ncells$`Narrow peaks`>=1),
-                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1,1])),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=1,3])),
         data.table("peaks"="narrow",
                    "cre"="enhancer",
                    "count"=sum(map_Ncells$`Narrow peaks`>=2),
-                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2,1])),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=2,3])),
         data.table("peaks"="narrow",
                    "cre"="active",
                    "count"=sum(map_Ncells$`Narrow peaks`>=3),
-                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3,1])),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=3,3])),
         data.table("peaks"="broad",
                    "cre"="promoter",
                    "count"=sum(map_Ncells$`Broad peaks`>=1),
-                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1,1])),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=1,5])),
         data.table("peaks"="broad",
                    "cre"="enhancer",
                    "count"=sum(map_Ncells$`Broad peaks`>=2),
-                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2,1])),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=2,5])),
         data.table("peaks"="broad",
                    "cre"="active",
                    "count"=sum(map_Ncells$`Broad peaks`>=3),
-                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3,1]))
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=3,5]))
   ))
+
 map_Ncells_Global <- map_Ncells_Global[, list(cells=list(.SD)), by = list(peaks,cre,count)]
+for(i in 1:length(map_Ncells_Global$cells)) {
+  colnames(map_Ncells_Global$cells[[i]]) = c("cell line","Number of experiments")
+}
+
+map_Ncells_Tissue = lapply(unique(map_Ncells$Tissue),function(x){
+  rbind(data.table("peaks"="narrow",
+                   "cre"="promoter",
+                   "tissue" = x,
+                   "count"=sum(map_Ncells$`Narrow peaks`>=1&map_Ncells$Tissue==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$Tissue==x,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$Tissue==x,3])),
+        data.table("peaks"="narrow",
+                   "cre"="enhancer",
+                   "tissue" = x,
+                   "count"=sum(map_Ncells$`Narrow peaks`>=2&map_Ncells$Tissue==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$Tissue==x,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$Tissue==x,3])),
+        data.table("peaks"="narrow",
+                   "cre"="active",
+                   "tissue" = x,
+                   "count"=sum(map_Ncells$`Narrow peaks`>=3&map_Ncells$Tissue==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$Tissue==x,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$Tissue==x,3])),
+        data.table("peaks"="broad",
+                   "cre"="promoter",
+                   "tissue" = x,
+                   "count"=sum(map_Ncells$`Broad peaks`>=1&map_Ncells$Tissue==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$Tissue==x,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$Tissue==x,5])),
+        data.table("peaks"="broad",
+                   "cre"="enhancer",
+                   "tissue" = x,
+                   "count"=sum(map_Ncells$`Broad peaks`>=2&map_Ncells$Tissue==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$Tissue==x,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$Tissue==x,5])),
+        data.table("peaks"="broad",
+                   "cre"="active",
+                   "tissue" = x,
+                   "count"=sum(map_Ncells$`Broad peaks`>=3&map_Ncells$Tissue==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$Tissue==x,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$Tissue==x,5]))
+  )})
+map_Ncells_Tissue_bind = do.call(rbind,map_Ncells_Tissue)
+map_Ncells_Tissue_bind = map_Ncells_Tissue_bind[map_Ncells_Tissue_bind$count!=0,]
+map_Ncells_Tissue_table <- map_Ncells_Tissue_bind[, list(cells=list(.SD)), by = list(peaks,cre,count,tissue)]
+for(i in 1:length(map_Ncells_Tissue_table$cells)) {
+  colnames(map_Ncells_Tissue_table$cells[[i]]) = c("cell line","Number of experiments")
+}
+
+map_Ncells_Cell = lapply(unique(map_Ncells$`Cell line`),function(x){
+  rbind(data.table("peaks"="narrow",
+                   "cre"="promoter",
+                   "cell" = x,
+                   "count"=sum(map_Ncells$`Narrow peaks`>=1&map_Ncells$`Cell line`==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$`Cell line`==x,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$`Cell line`==x,3])),
+        data.table("peaks"="narrow",
+                   "cre"="enhancer",
+                   "cell" = x,
+                   "count"=sum(map_Ncells$`Narrow peaks`>=2&map_Ncells$`Cell line`==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$`Cell line`==x,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$`Cell line`==x,3])),
+        data.table("peaks"="narrow",
+                   "cre"="active",
+                   "cell" = x,
+                   "count"=sum(map_Ncells$`Narrow peaks`>=3&map_Ncells$`Cell line`==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$`Cell line`==x,1],
+                                      map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$`Cell line`==x,3])),
+        data.table("peaks"="broad",
+                   "cre"="promoter",
+                   "cell" = x,
+                   "count"=sum(map_Ncells$`Broad peaks`>=1&map_Ncells$`Cell line`==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$`Cell line`==x,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$`Cell line`==x,5])),
+        data.table("peaks"="broad",
+                   "cre"="enhancer",
+                   "cell" = x,
+                   "count"=sum(map_Ncells$`Broad peaks`>=2&map_Ncells$`Cell line`==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$`Cell line`==x,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$`Cell line`==x,5])),
+        data.table("peaks"="broad",
+                   "cre"="active",
+                   "cell" = x,
+                   "count"=sum(map_Ncells$`Broad peaks`>=3&map_Ncells$`Cell line`==x),
+                   "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$`Cell line`==x,1],
+                                      map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$`Cell line`==x,5]))
+  )})
+map_Ncells_Cell_bind = do.call(rbind,map_Ncells_Cell)
+map_Ncells_Cell_bind = map_Ncells_Cell_bind[map_Ncells_Cell_bind$count!=0,]
+map_Ncells_Cell_table <- map_Ncells_Cell_bind[, list(cells=list(.SD)), by = list(peaks,cre,count,cell)]
+for(i in 1:length(map_Ncells_Cell_table$cells)) {
+  colnames(map_Ncells_Cell_table$cells[[i]]) = c("cell line","Number of experiments")
+}

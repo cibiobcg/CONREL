@@ -10,7 +10,9 @@ tx_cCons = lapply(1:nrow(loadDF),function(i){
   if(nrow(cCons)==0){
     generateEmptyTrack(elements[1])
   } else {
-    GRanges_ccons = makeGRangesFromDataFrame(cCons,seqnames.field="X1",start.field = "X2",end.field = "X3")
+    cCons = cbind(cCons,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"cell"),collapse="%"))
+    colnames(cCons) = c(colnames(cCons)[1:(length(colnames(cCons))-1)],"typeCRE")
+    GRanges_ccons = makeGRangesFromDataFrame(cCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
     FeatureTrack(
       GRanges_ccons,
       tooltip = as.data.frame(GRanges_ccons),

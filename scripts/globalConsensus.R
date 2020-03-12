@@ -18,7 +18,6 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
   if(nrow(gCons)==0){
     generateEmptyTrack(elements[1])
   } else {
-    nCells = cbind(map_Ncells_Global[map_Ncells_Global$peaks==loadDF[i,1]&map_Ncells_Global$cre==loadDF[i,2],3:4])
     if(length(input$tba)>0){
       tba = system(paste0("tabix ",inputFolder,"TBA_consensus/global_TBA/",loadDF[i,2],".",loadDF[i,1],".bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
       tba_split = lapply(strsplit(tba, "\t", fixed=TRUE),function(x)if(length(x)<9){c(x,"")}else{x})
@@ -40,10 +39,12 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
       colnames(gCons) = c(colnames(gCons)[1:3],paste0("TBA_pvalue<",input$pvalues))
       # colnames(gCons) = c(colnames(gCons)[1:3],paste0("TBA_pvalue<",c("0.1","0.05","0.01","0.001","0.0001","0.00001")))
     }
+    gCons = cbind(gCons,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"global"),collapse="%"))
+    colnames(gCons) = c(colnames(gCons)[1:(length(colnames(gCons))-1)],"typeCRE")
     GRanges_gcons = makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
     FeatureTrack(
       GRanges_gcons,
-      tooltip = cbind(as.data.frame(GRanges_gcons),nCells$count),
+      tooltip = as.data.frame(GRanges_gcons),
       label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
       names = "",height = 50,color = consensusColor(loadDF[i,2],loadDF[i,1]),
       background = "#eeeeee")
