@@ -14,7 +14,7 @@
 <h4>1. Unpack TAR archive</h4>
 
 <code><pre>
-tar -xvf genomeBrowser.tar
+tar -xvf CONREL_vX.tar
 </pre></code>
 
 <br>
@@ -118,7 +118,7 @@ $ /bin/bash prepare_template.sh --disable-index
 <code><pre>
 $ singularity run --bind /tmp/shiny-server.gG1X2Z/logs:/var/log/shiny \\ 
   --bind /tmp/shiny-server.gG1X2Z/lib:/var/lib/shiny-server \\ 
-  --bind shiny-server.conf:/etc/shiny-server/shiny-server.conf shiny.simg
+  --bind shiny-server.conf:/etc/shiny-server/shiny-server.conf CONREL.simg
 
 [2018-04-07T00:14:17.403] [INFO] shiny-server - Shiny Server v1.5.7.890 (Node.js v8.10.0)
 [2018-04-07T00:14:17.405] [INFO] shiny-server - Using config file '/etc/shiny-server/shiny-server.conf'
@@ -126,8 +126,11 @@ $ singularity run --bind /tmp/shiny-server.gG1X2Z/logs:/var/log/shiny \\
 </pre></code>
 
 <br>
-<h4>Custom application</h4>
+<h3>Custom application</h3>
 
-<p>When you run the container, if you add a bind to a folder of your own apps in /srv/shiny-server/, you can add your custom applications. The bind would look something like:</p>
+<p>When you run the container, if you add a bind to a folder of your own apps in /srv/shiny-server/CONREL, you can add your custom applications. The bind would look something like:</p>
 
-<code><pre>--bind /path/to/apps/folder:/srv/shiny-server</pre></code>
+<code><pre>--bind /path/to/apps/folder:/srv/shiny-server/CONREL</pre></code>
+
+<p>This is very useful if you want to use the very last updated version of CONREL webapp or you want to modify it as you prefered. The shiny app is already installed into the singularity image. Anyway, you can download the source code of the app from the github repository here: <a href="https://github.com/cibiobcg/CONREL">github, CONREL</a> and bind to the image.
+</p>

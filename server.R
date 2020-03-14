@@ -1,33 +1,6 @@
 server <- function(input, output, session) {
   if(simpleDebug){print("Start server")}
   
-  # observeEvent(input$sideBar, {
-  #   if(input$sideBar %in% c("genome","dna","dl","empty")){
-  #     output$toolsMenu <- renderMenu({
-  #       dropdownButton(
-  #         inputId = "mydropdown",
-  #         label = "Tools",
-  #         icon = icon("tools"),
-  #         # status = "warning",
-  #         size = "default",
-  #         circle = FALSE,
-  #         actionButton(label = "DNA sequence",inputId = "dna",icon = icon("dna")),
-  #         actionButton(label = "Download data",inputId = "dl",icon = icon("download"))
-  #       )
-  #       # dropdownMenu(
-  #       #   type = "tasks",
-  #       #   badgeStatus = "danger",
-  #       #   headerText = "",
-  #       #   icon = span(tagList(icon("tools"), "Tools")),
-  #       #   menuItem("DNA sequence", tabName = "dna", icon = icon("dna")),
-  #       #   # uiOutput("seq_link")
-  #       #   menuItem("Download data", tabName = "dl", icon = icon("download"))
-  #       # )
-  #     })
-  #   } else {
-  #     output$toolsMenu <- NULL
-  #   }
-  # })
   ### Observed events for back button in search tab
   source(file.path("observer", "backButton.R"),  local = TRUE)$value
   ### Observed events for zoom/drag/update on track and update the input field
@@ -98,16 +71,16 @@ server <- function(input, output, session) {
   ### DOWNLOAD ###
   ################
   
-  # source(file.path("observer", "download.R"),  local = TRUE)$value
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      paste('genomeBrowser_v1.tar', sep='')
-    },
-    content = function(con) {
-      file.copy("/shares/CIBIO-Storage/CIBIO/sharedRL/Projects/genomeBrowser/source/container/genomeBrowser_v1.tar", con)
-    },
-    contentType = "application/zip"
-  )
+  # # source(file.path("observer", "download.R"),  local = TRUE)$value
+  # output$downloadData <- downloadHandler(
+  #   filename = function() {
+  #     paste('genomeBrowser_v1.tar', sep='')
+  #   },
+  #   content = function(con) {
+  #     file.copy("/shares/CIBIO-Storage/CIBIO/sharedRL/Projects/genomeBrowser/source/container/genomeBrowser_v1.tar", con)
+  #   },
+  #   contentType = "application/zip"
+  # )
   
   
   #################
@@ -142,14 +115,5 @@ server <- function(input, output, session) {
     track()
   })
   
-  # observeEvent(c(input$Run,input$searchGenes),ignoreInit = T, {
-  #     if(TRUE) {
-  #         output$messageMenu <- renderMenu({
-  #             dropdownMenu(type = "notifications",.list = v
-  #             )
-  #         })
-  #         
-  #     }
-  # })    
-  
+
 }
