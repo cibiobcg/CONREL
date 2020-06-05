@@ -266,7 +266,7 @@ observeEvent(input$example1, ignoreInit = T,{
           GRanges_gcons,
           tooltip = as.data.frame(GRanges_gcons),
           label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
-          names = "",height = 50,color = consensusColor(loadDF[i,2],loadDF[i,1]),
+          names = "",height = 25,color = consensusColor(loadDF[i,2],loadDF[i,1]),
           background = "#eeeeee")
       }
     })
@@ -367,7 +367,7 @@ observeEvent(input$example2, ignoreInit = T,{
           GRanges_gcons,
           tooltip = as.data.frame(GRanges_gcons),
           label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
-          names = "",height = 50,color = consensusColor(loadDF[i,2],loadDF[i,1]),
+          names = "",height = 25,color = consensusColor(loadDF[i,2],loadDF[i,1]),
           background = "#eeeeee")
       }
     })
@@ -389,7 +389,7 @@ observeEvent(input$example2, ignoreInit = T,{
           GRanges_tcons,
           tooltip = as.data.frame(GRanges_tcons),
           label = paste0("tissue consensus tracks - ",splitFileName[1]," - ",splitFileName[2]," , ",loadDF[i,1]," peaks"),
-          names = "",height = 50,color = consensusColor(loadDF[i,2],loadDF[i,1]),
+          names = "",height = 25,color = consensusColor(loadDF[i,2],loadDF[i,1]),
           background = "#eeeeee")
       }
     })
