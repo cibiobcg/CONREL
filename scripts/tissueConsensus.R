@@ -52,7 +52,7 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
       GRanges_tcons,
       tooltip = as.data.frame(GRanges_tcons),
       label = paste0("tissue consensus tracks - ",splitFileName[1]," - ",splitFileName[2]," , ",loadDF[i,1]," peaks"),
-      names = "",height = 50,color = consensusColor(loadDF[i,2],loadDF[i,1]),
+      names = "",height = 25,color = consensusColor(loadDF[i,2],loadDF[i,1]),
       background = "#eeeeee")
   }
 })

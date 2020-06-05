@@ -20,6 +20,11 @@ server <- function(input, output, session) {
   # Observer that listens to changes in tooltip (click on a regions, Shiny.onInputChange() in javascript)
   source(file.path("observer", "tooltip.R"),  local = TRUE)$value
   
+  ##############
+  ### LEGEND ###
+  ##############
+  source(file.path("observer", "legendMenu.R"), local = TRUE)$value
+  
   
   ###############################
   ### SELECT CONSENSUS & GENE ###

@@ -13,7 +13,7 @@ ui <- dashboardPagePlus(
     title = tagList(
       span(class = "logo-lg", "CONREL v1"), 
       img(src = "https://image.flaticon.com/icons/svg/268/268752.svg")),
-    left_menu = tagList(dropdownMenuOutput("toolsMenu"))
+    left_menu = tagList(dropdownMenuOutput("legendMenu"))
   ),
   
   
@@ -77,6 +77,9 @@ ui <- dashboardPagePlus(
         color: #666 !important;
         font-size: 16px !important;
       }
+      .btn {
+        border: 2px solid #aaaaaa;
+      }
     '))),
                 useShinyjs(),
                 tabItems(
@@ -116,7 +119,7 @@ ui <- dashboardPagePlus(
                             #status = "warning", solidHeader = TRUE,
                             textInput("region", "Chromosome region:"),
                             uiOutput("searchRegionError",class="custom-ui-errors"),
-                            actionButton("searchButtonPos", "Search by position")
+                            actionButton("searchButtonPos", "Search")
                         ),
                         box(width = 12,
                             title = "SEARCH BY GENE NAME",
@@ -125,7 +128,7 @@ ui <- dashboardPagePlus(
                                              placeholder = 'Select a gene',
                                              maxItems = 1,multiple = F, searchConjunction = 'and')),
                             uiOutput("searchGeneError",class="custom-ui-errors"),
-                            actionButton("searchButtonGene", "Search by gene"),
+                            actionButton("searchButtonGene", "Search"),
                             conditionalPanel(condition='input.menu == "hidden"',
                                              selectInput(
                                                inputId="selectData",
@@ -310,7 +313,7 @@ ui <- dashboardPagePlus(
                   tabItem(
                     tabName = "help",
                     fluidPage(column(
-                      width = 6,offset=3,
+                      width = 12,offset=0,
                       includeHTML("www/help.html")
                       ))
                   ),

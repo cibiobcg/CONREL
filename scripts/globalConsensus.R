@@ -46,7 +46,7 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
       GRanges_gcons,
       tooltip = as.data.frame(GRanges_gcons),
       label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
-      names = "",height = 50,color = consensusColor(loadDF[i,2],loadDF[i,1]),
+      names = "",height = 25,color = consensusColor(loadDF[i,2],loadDF[i,1]),
       background = "#eeeeee")
   }
 })

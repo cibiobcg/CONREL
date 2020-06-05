@@ -94,7 +94,8 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
                                                   logicOp = c('&','&')))
         tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
                                 names = paste(gene$symbol, " (", gene$gene_biotype, ")", sep = ""),
-                                color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
+                                color = mapColor[match(gene$gene_biotype,levelsColor)],
+                                #color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
                                 background = "#eeeeee",label = NULL)
       } else {
         if(simpleDebug){print("Load transcript track view")}
@@ -228,7 +229,8 @@ observeEvent(input$example1, ignoreInit = T,{
                                               logicOp = c('&','&')))
     tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
                             names = paste(gene$symbol, " (", gene$gene_biotype, ")", sep = ""),
-                            color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
+                            color = mapColor[match(gene$gene_biotype,levelsColor)],
+                            #color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
                             background = "#eeeeee",label = NULL)
     
     
@@ -336,7 +338,8 @@ observeEvent(input$example2, ignoreInit = T,{
                                               logicOp = c('&','&')))
     tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
                             names = paste(gene$symbol, " (", gene$gene_biotype, ")", sep = ""),
-                            color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
+                            color = mapColor[match(gene$gene_biotype,levelsColor)],
+                            #color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
                             background = "#eeeeee",label = NULL)
     
     ##############################################
