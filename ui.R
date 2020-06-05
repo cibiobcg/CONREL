@@ -32,7 +32,8 @@ ui <- dashboardPagePlus(
                 # hr(),uiOutput("seq_link"),
                 # downloadButton('download',"Download the data",style="color: #fff; background-color: #006502; border-color: #2e6da4"),
                 menuItemOutput("link"),hr(),
-                menuItem("Help", tabName = "help", icon = icon("info-circle")),
+                menuItem("About", tabName = "about", icon = icon("info-circle")),
+                menuItem("Help", tabName = "help", icon = icon("question-circle")),
                 menuItem("Download", tabName = "singularity", icon = icon("box-open"))
     )
   ),
@@ -308,7 +309,18 @@ ui <- dashboardPagePlus(
                     )
                   ),
                   
-                  
+                  tabItem(
+                    tabName = "about",
+                    fluidPage(column(
+                      width = 12,offset=0,
+                      h2("CONREL - CONsensus Regulatory ELements"),
+                      valueBox(width=3,"5,424", "TF DNA-binding sites motifs", color = "yellow", icon = icon("level-down-alt")),
+                      valueBox(width=3,"1,710", "Transcription factor", color = "purple", icon = icon("share")),
+                      valueBox(width=3,"198", "cell-line/tissue", color = "green", icon = icon("signal")),
+                      valueBox(width=3,"1.5 million", "genome regulatory elements", color = "blue", icon = icon("align-center")),
+                      box(includeHTML("www/about.html"))
+                    ))
+                  ),
                   
                   tabItem(
                     tabName = "help",
