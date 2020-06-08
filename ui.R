@@ -1,9 +1,12 @@
 source("./global.R")
+tag = span(class = "logo-lg")
+child = img(class = "logo-lg", src="CONREL_LOGO_CORNER.svg",width = "100%", height = "auto")
+tag2 = tagAppendChild(tag, child)
 
 ui <- dashboardPagePlus(
   collapse_sidebar = FALSE,enable_preloader = TRUE,loading_duration = 2,
   md = TRUE,
-  skin='green',
+  sk='green',
   
   ############  
   ### HEAD ###
@@ -11,7 +14,8 @@ ui <- dashboardPagePlus(
   
   dashboardHeaderPlus(
     title = tagList(
-      span(class = "logo-lg", "CONREL v1"), 
+      # tag = span(class = "logo-lg", "CONREL v1"), 
+      tag2,
       img(src = "https://image.flaticon.com/icons/svg/268/268752.svg")),
     left_menu = tagList(dropdownMenuOutput("legendMenu"))
   ),
@@ -91,7 +95,8 @@ ui <- dashboardPagePlus(
                     tabName = "home",
                     fluidPage(
                       fluidRow(width=12,align = "center",
-                               h1(tags$b("Welcome in CONREL")),
+                               #h1(tags$b("Welcome in CONREL")),
+                               img(class = "logo-lg", src="CONREL_LOGO_OG.svg",width = "50%", height = "auto"),
                                h3(tags$b("CONsensus Regulatory ELements"))),
                       br(),br(),br(),
                       fluidRow(column(width=6,offset=3,
@@ -99,7 +104,7 @@ ui <- dashboardPagePlus(
                                   elements at different levels of abstraction. The total binding affinity of transcription
                                   factors on whole consensus region sequences is here fully exploited to characterize and
                                   annotate functional properties of regulatory elements. CONREL can be used to explore genomic
-                                  loci, genes or genomic regions of interest across different cell lines and tissues.")
+                                  loci, genes or genomic regions of interest across different cell lines and tissues.",style="text-align: justify; text-justify: inter-word;")
                                   ))
                     )),
                   

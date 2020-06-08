@@ -8,10 +8,11 @@ library(shinyTree)
 library(shinyWidgets)
 library(data.table)
 library(DT)
+library(dplyr)
+
 library(TnT)
 
 library(biovizBase)
-
 library(GenomicFeatures)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(EnsDb.Hsapiens.v75)
