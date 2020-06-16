@@ -26,6 +26,12 @@ server <- function(input, output, session) {
   source(file.path("observer", "legendMenu.R"), local = TRUE)$value
   
   
+  ################
+  ### ASSEMBLY ###
+  ################
+  source(file.path("observer","assembly.R"), local = TRUE)$value
+  
+  
   ###############################
   ### SELECT CONSENSUS & GENE ###
   ###############################

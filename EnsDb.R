@@ -7,6 +7,10 @@ if("EnsDb.Hsapiens.v75"%in%ip$Package){
 } else if("EnsDb.Hsapiens.v86"%in%ip$Package){
   library(EnsDb.Hsapiens.v86)
   EnsDb <- EnsDb.Hsapiens.v86
+  base_path = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"
+  encodeFolder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/consensus/"
+  inputFolder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"
+  TBA_folder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"
   hg19 = fread(paste0(inputFolder,"data/hg38.chrom.bed"),data.table = F)
 }
 

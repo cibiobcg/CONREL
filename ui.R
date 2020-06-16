@@ -27,6 +27,7 @@ ui <- dashboardPagePlus(
   
   dashboardSidebar(
     sidebarMenu(id = "sideBar",
+                menuItemOutput("assembly"),
                 menuItem("Home", tabName = "home", icon = icon("home"),selected = T),
                 #menuItem("Search", tabName = "search1", icon = icon("search")),
                 #menuItemOutput("outSearch"),
