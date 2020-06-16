@@ -168,7 +168,7 @@ ui <- dashboardPagePlus(
                       boxPlus(width=12,title = "SETTINGS",closable = F,
                               fluidRow(
                                 column(width=12,offset=0,align = "center",
-                                       radioGroupButtons(inputId="choice_track", label="Visualization: select the details of visualization for the genome browser:", 
+                                       radioGroupButtons(inputId="choice_track", label="select the gene level or the transcript level visualization for the genome browser:", 
                                                          choices = c("gene","transcript"),width = "100%")
                                        )
                               ),
@@ -211,11 +211,15 @@ ui <- dashboardPagePlus(
                                                                                       maxItems = 1500,multiple = T, searchConjunction = 'and')),
                                                         uiOutput("tissueError",class="custom-ui-errors")
                                        ))),
-                              h3("Optional tracks to add:",align="center"),
+                              h3("Optional tracks to add:",align="center"),column(width=6,
                               checkboxGroupInput(inputId = "snps",
-                                                 label = "Add SNPs track.",
-                                                 choiceName = c('SNPs - dbSNP v151'),
-                                                 choiceValues = c('snp')),
+                                                 label = "",
+                                                 choiceName = c('Add SNPs track - dbSNP v151'),
+                                                 choiceValues = c('snp'))),column(width=6,
+                              checkboxGroupInput(inputId = "tss",
+                                                 label = "",
+                                                 choiceName = c('Add SwitchGear TSS track'),
+                                                 choiceValues = c('tss'))),
                               fluidRow(
                                 column(width=6,
                                        checkboxGroupInput(inputId = "tba",
@@ -227,8 +231,8 @@ ui <- dashboardPagePlus(
                                 ),
                                 conditionalPanel(condition = "input.tba == 'tba'",
                                                  column(width=6,
-                                                 p("Please select one or more p-values cutoff",class="custom-ui-warnings"),
-                                                        checkboxGroupInput(inputId = "pvalues",label = "p-value cutoff:",
+                                                 # p("Please select one or more p-values cutoff",class="custom-ui-warnings"),
+                                                        checkboxGroupInput(inputId = "pvalues",label = "p-value cutoff:",selected = "0.00001",
                                                                            choices = c("0.00001","0.0001","0.001","0.01","0.05","0.1")))
                                 )
                               ),
@@ -318,12 +322,24 @@ ui <- dashboardPagePlus(
                     tabName = "about",
                     fluidPage(column(
                       width = 12,offset=0,
-                      h2("CONREL - CONsensus Regulatory ELements"),
-                      valueBox(width=3,"5,424", "TF DNA-binding sites motifs", color = "yellow", icon = icon("level-down-alt")),
-                      valueBox(width=3,"1,710", "Transcription factor", color = "purple", icon = icon("share")),
-                      valueBox(width=3,"198", "cell-line/tissue", color = "green", icon = icon("signal")),
-                      valueBox(width=3,"1.5 million", "genome regulatory elements", color = "blue", icon = icon("align-center")),
-                      box(includeHTML("www/about.html"))
+                      # h2("CONREL - CONsensus Regulatory ELements"),
+                      valueBox(href = "#about_tf",width=3,"5,424","TF DNA-binding sites motifs", color = "yellow", icon = icon("level-down-alt")),
+                      valueBox(href = "#about_tf",width=3,"1,710","Transcription factor", color = "purple", icon = icon("share")),
+                      valueBox(href = "#about_cell",width=3,"1,398","ChIP-seq data", color = "green", icon = icon("signal")),
+                      valueBox(href = "#about_cre",width=3,"1.5 million","genome regulatory elements", color = "blue", icon = icon("align-center")),
+                      column(width=5,boxPlus(width=12,closable = F,title="Datasets sources",
+                              status = "danger", solidHeader = F,
+                              includeHTML("www/about/about_dataset.html")
+                      ),
+                      boxPlus(width=12,closable = F,title="liftOver GRCh38/hg38",
+                              status = "danger", solidHeader = F,
+                              includeHTML("www/about/about_hg38.html")
+                      )),
+                      box(width=7,includeHTML("www/about/about.html")),
+                      
+                      box(width=12,includeHTML("www/about/about_cell.html")),
+                      box(width=12,includeHTML("www/about/about_cre.html")),
+                      box(width=12,includeHTML("www/about/about_tf.html"))
                     ))
                   ),
                   
@@ -331,135 +347,32 @@ ui <- dashboardPagePlus(
                     tabName = "help",
                     fluidPage(column(
                       width = 12,offset=0,
-                      includeHTML("www/help.html")
-                      ))
+                      box(width=12,includeHTML("www/help/help.html")),
+                      box(width=12,includeHTML("www/help/help_start.html")),
+                      box(width=12,includeHTML("www/help/help_search.html")),
+                      box(width=12,includeHTML("www/help/help_setting.html")),
+                      box(width=12,includeHTML("www/help/help_browser.html"))
+                    ))
                   ),
                   
                   tabItem(
                     tabName = "singularity",
-                    fluidPage(
-                      width = 12,
-                      includeHTML("www/singularity.html"),
-                      # h1("Download singularity image"),
-                      # br(),
-                      # h2("Download"),
-                      # br(),
-                      # p("Download a singuarity image to run this shiny app on your local server."),
-                      # p(HTML('&emsp;'),"Download link:    ",downloadLink('downloadData', 'genomeBrowser_v1.tar')," 17 Oct 2019 (~30GB)"),
-                      # includeHTML("www/singularity_body.html")
-                      # br(),
-                      # h2("Instructions"),
-                      # br(),
-                      # h4("1. Unpack TAR archive"),
-                      # box(width=12,"tar -xvf genomeBrowser.tar"),
-                      # br(),
-                      # h4("2. Prepare shiny-server configuration file"),
-                      # p("You will first need to generate a custom configuration for your user, and it will give you instructions for usage:"),
-                      # box(width=12,
-                      #     p("$ /bin/bash prepare_conf.sh"),
-                      #     br(),
-                      #     code(
-                      #       p("Steps:"),
-                      #       p(HTML('&emsp;'),"----------------------------------------------------------------------"),
-                      #       p(HTML('&emsp;'),"1. Use this script to prepare your shiny-server.conf (configuration)"),
-                      #       
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"/bin/bash prepare_template.sh"),
-                      #       
-                      #       p(HTML('&emsp;'),"----------------------------------------------------------------------"),
-                      #       p(HTML('&emsp;'),"2. If needed, you can provide the following arguments"),
-                      #       
-                      #       p(HTML('&emsp;'),"Commands:"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"help: show help and exit"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"start: the generation of your config"),
-                      #       
-                      #       p(HTML('&emsp;'),"Options:"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"--port:  the port for the application (e.g., shiny default is 3737)"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"--user:  the user for the run_as directive in the shiny configuration"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"--base: base folder with applications"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"--logs: temporary folder with write for logs (not required)"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"--disable-index: disable directory indexing"),
-                      #       
-                      #       p(HTML('&emsp;'),"----------------------------------------------------------------------"),
-                      #       p(HTML('&emsp;'),"3. Make sure Singularity is loaded, and run the container using "),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"the commands shown by the template.")
-                      #     )
-                      # ),
-                      # p("When you add 'start' it will do the generation. Here we don't supply any arguments so that they are randomly generated."),
-                      # box(width=12,
-                      #     p("$ /bin/bash prepare_template.sh start"),
-                      #     br(),
-                      #     code(
-                      #       p("Generating shiny configuration..."),
-                      #       p("port: 9870"),
-                      #       p("logs: /tmp/shiny-server.gG1X2Z"),
-                      #       p("base: /srv/shiny-server/shiny_genomeBrowser"),
-                      #       p("Server logging will be in /tmp/shiny-server.gG1X2Z"),
-                      #       
-                      #       p("To run your server:"),
-                      #       
-                      #       p(HTML('&emsp;'),"module load singularity/2.4.6"),
-                      #       p(HTML('&emsp;'),"singularity run --bind /tmp/shiny-server.gG1X2Z/logs:/var/log/shiny \ "),
-                      #       p(HTML('&emsp;'),"--bind /tmp/shiny-server.gG1X2Z/lib:/var/lib/shiny-server \ "),
-                      #       p(HTML('&emsp;'),"--bind shiny-server.conf:/etc/shiny-server/shiny-server.conf shiny.simg"),
-                      #       p(HTML('&emsp;'),"---------------------------------------------------------------------------"),
-                      #       p("For custom applications, also add --bind /srv/shiny-server:/srv/shiny-server"),
-                      #       p(HTML('&emsp;'),"To see your applications, open your browser to http://127.0.0.1:9870 or"),
-                      #       p(HTML('&emsp;'),"open a ssh connection from your computer to your cluster.")
-                      #     )
-                      # ),
-                      # p("The configuration is generated in your present working directory:"),
-                      # box(width=12,
-                      #     p("$ cat shiny-server.conf"),
-                      #     br(),
-                      #     code(
-                      #       p("run_as vanessa;"),
-                      #       p("server {"),
-                      #       p(HTML('&emsp;'),"listen 9098;"),
-                      #       
-                      #       p(HTML('&emsp;'),"# Define a location at the base URL"),
-                      #       p(HTML('&emsp;'),"location / {"),
-                      #       
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"# Host the directory of Shiny Apps stored in this directory"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"site_dir /srv/shiny-server;"),
-                      #       
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"# Log all Shiny output to files in this directory"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"log_dir /tmp/shiny-server.PtVRXE;"),
-                      #       
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"# When a user visits the base URL rather than a particular application,"),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"# an index of the applications available in this directory will be shown."),
-                      #       p(HTML('&emsp;'),HTML('&emsp;'),"directory_index on;"),
-                      #       p(HTML('&emsp;'),"}"),
-                      #       p("}")
-                      #     )
-                      # ),
-                      # p("You can also choose to disable the indexing, meaning that someone that navigates to the root of the server (at the port) won't be able to explore all of your apps."),
-                      # code("$ /bin/bash prepare_template.sh --disable-index"),br(),br(),
-                      # p("You can also customize the port, temporary folder, 'run_as' user, and base (if somewhere other than /srv/shiny-server)")
-                      # ,
-                      # br(),
-                      # h4("3. Start server"),
-                      # p("Once you have that template, follow the instructions to run the container. The temporary folder is already created for you."),
-                      # box(width=12,
-                      #     p("$ singularity run --bind /tmp/shiny-server.gG1X2Z/logs:/var/log/shiny \\ "),
-                      #     p(HTML('&emsp;'),"--bind /tmp/shiny-server.gG1X2Z/lib:/var/lib/shiny-server \\ "),
-                      #     p(HTML('&emsp;'),"--bind shiny-server.conf:/etc/shiny-server/shiny-server.conf shiny.simg"),
-                      #     br(),
-                      #     code(
-                      #       p("[2018-04-07T00:14:17.403] [INFO] shiny-server - Shiny Server v1.5.7.890 (Node.js v8.10.0)"),
-                      #       p("[2018-04-07T00:14:17.405] [INFO] shiny-server - Using config file '/etc/shiny-server/shiny-server.conf'"),
-                      #       p("[2018-04-07T00:14:17.456] [INFO] shiny-server - Starting listener on 0.0.0.0:9870")
-                      #     )
-                      # ),br(),br(),
-                      # h4("Custom application"),
-                      # p("When you run the container, if you add a bind to a folder of your own apps in /srv/shiny-server/, you can add your custom applications. The bind would look something like:"),
-                      # code("--bind /path/to/apps/folder:/srv/shiny-server")
-                      
-                      
-                      # tags$div(tags$ul(
-                      #   tags$li("test1"),
-                      #   tags$li("test2"),
-                      #   tags$li("test3")),  style = "font-size: 15px")
-                    )
+                    fluidPage(column(
+                      width=12,
+                      box(width = 12,closable = F,title="Download singularity image",
+                          status = "danger", solidHeader = F,
+                          includeHTML("www/download/singularity.html"),
+                          box(width=12,closable = F,collapsible = T,collapsed = T,title="How to install and run singularity image",
+                              status = "danger", solidHeader = F,
+                              includeHTML("www/download/singularity_info.html")
+                              
+                          )
+                      ),
+                      box(width = 12,closable = F,title="Download other data",
+                          status = "danger", solidHeader = F,
+                          includeHTML("www/download/download.html")
+                          )
+                    ))
                   )
                 )
   )

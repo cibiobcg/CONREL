@@ -38,7 +38,7 @@ observeEvent(input$searchButtonGene, ignoreInit = T,{
     output$searchGeneError <- renderUI({
       p("Please provide a gene")
     })
-  } else if (input$genes %in% genes(EnsDb.Hsapiens.v75)$symbol) {
+  } else if (input$genes %in% genes(EnsDb)$symbol) {
     if(simpleDebug){print("Change search tab")}
     clickGene <<- TRUE
     updateTabItems(session, "sideBar", "search2")

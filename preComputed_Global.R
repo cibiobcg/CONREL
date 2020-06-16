@@ -1,4 +1,5 @@
 library(data.table)
+library(GenomicRanges)
 
 base_path = "/shares/CIBIO-Storage/BCGLAB/CONREL/"
 
@@ -13,7 +14,6 @@ inputFolder = base_path
 dasServer="http://genome.ucsc.edu/cgi-bin/das/hg19/dna"
 defaultGene = "BRCA2"
 elements <- c("chr7","139,424,940","141,784,100")
-hg19 = fread(paste0(inputFolder,"data/hg19.chrom.bed"),data.table = F)
 
 
 # Increase the windows by 1M before end after the selection (if it is possible, or max at the chr limits)
@@ -144,7 +144,7 @@ checkValidRegion <- function(region) {
   start_geneView = window_load[1]
   end_geneView = window_load[2]
   chr_geneView = elements[1]
-  gene <- genes(EnsDb.Hsapiens.v75,
+  gene <- genes(EnsDb,
                 filter=AnnotationFilterList(GeneStartFilter(start_geneView,condition = '>'),
                                             GeneEndFilter(end_geneView,condition = '<'),
                                             SeqNameFilter(chr_geneView),
@@ -207,6 +207,28 @@ loadSNPs <- function(elements,window_load){
                                height = 15,label=NULL)
   return(append(pt,emptyTrack))
 }
+
+
+
+loadTSS <- function(elements,window_load){
+  tss.filtered = system(paste0("tabix ",inputFolder,"data/UCSC_TSS.bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
+  tss.filtered = data.frame(do.call(rbind, strsplit(tss.filtered, "\t", fixed=TRUE)))
+  
+  ir <- IRanges(start = as.numeric(as.character(tss.filtered$X2)), end = as.numeric(as.character(tss.filtered$X3)))
+  gpos <- GRanges(elements[1], ir)
+  # gpos$score <- rep(1,nrow(tss.filtered))
+  # snps.filtered$alleles = paste(snps.filtered$X4,snps.filtered$X5,sep=">")
+  gtooltip <- tss.filtered[,c(4,5)]
+  colnames(gtooltip) = c("strand","confScore")
+  pt = BlockTrack(gpos,color = "black",label = "SwitchGear TSS", tooltip = gtooltip,background = "#eeeeee",
+                  height = 15)
+  emptyTrack = TnT::BlockTrack(GRanges(elements[1],IRanges(0,1)),
+                               color = "#EEEEEE",background = "#EEEEEE",
+                               height = 15,label=NULL)
+  return(append(pt,emptyTrack))
+}
+
+
 
 
 map_Ncells = fread("/shares/CIBIO-Storage/BCGLAB/CONREL/data/mapping_Ncells.csv")
@@ -338,4 +360,5 @@ for(i in 1:length(map_Ncells_Cell_table$cells)) {
   colnames(map_Ncells_Cell_table$cells[[i]]) = c("cell line","Number of experiments")
 }
 
-save.image("/shares/CIBIO-Storage/BCGLAB/CONREL/shinyApp/CONREL/global.RData")
+# save.image("/shares/CIBIO-Storage/BCGLAB/CONREL/shinyApp/CONREL/global.RData")
+save.image("/shares/CIBIO-Storage/BCGLAB/CONREL/shinyApp/CONREL/global_new.RData")

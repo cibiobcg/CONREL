@@ -66,6 +66,7 @@ server <- function(input, output, session) {
   # The track response to generation of track by position/gene searches
   track = reactiveVal(trackOut)
   source(file.path("observer", "comptrack.R"),  local = TRUE)$value
+  source(file.path("observer", "comptrack_Examples.R"),  local = TRUE)$value
   # Observer that generates the Composite track by position
   #source(file.path("observer", "comptrack_region.R"),  local = TRUE)$value
   # Observer that generates the Composite track by gene selection

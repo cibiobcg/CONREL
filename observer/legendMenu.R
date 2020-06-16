@@ -3,7 +3,7 @@ observeEvent(input$sideBar, ignoreInit = T, {
     output$legendMenu <- renderMenu({
       dropdownBlock(id="legendMenu",badgeStatus = NULL,
                     icon = icon("sliders"),title="Color Legend",
-                    fluidRow(h4("Gene track:",style="color:black;font-weight: bold;width:600px"),
+                    fluidRow(h4(if(input$choice_track=='gene'){"Gene track:"}else{"Transcript track:"},style="color:black;font-weight: bold;width:600px"),
                       HTML(paste0('<style type="text/css">
                             .tg  {border-collapse:collapse;border-spacing:0;color:black}
                             .tabglobal {width:300px}
@@ -13,9 +13,11 @@ observeEvent(input$sideBar, ignoreInit = T, {
                             <table class="tabglobal"><tbody><tr><td>
                             <table class="tg">
                             <tbody>',
-                        unlist(lapply(1:12,function(x){
+                        if(input$choice_track=='gene') {unlist(lapply(1:12,function(x){
                           paste0('<tr><td><table class="tgInside"><tbody><tr style="height:8px"><td style="background-color:',mapColor[legend_idx][x],'"></td></tr></tbody></table></td><td style="padding-left:15px;padding-bottom:5px">',levelsColor[legend_idx][x],'</td></tr>')
-                        })),'
+                        }))}else{unlist(lapply(1:12,function(x){
+                          paste0('<tr><td><table class="tgInside"><tbody><tr style="height:8px"><td style="background-color:',mapColor_tx[legend_idx_tx][x],'"></td></tr></tbody></table></td><td style="padding-left:15px;padding-bottom:5px">',levelsColor_tx[legend_idx_tx][x],'</td></tr>')
+                        }))},'
                             </tbody>
                             </table></td></tr></tbody></table>')
                       ),h4("Consensus track:",style="color:black;font-weight: bold;"),

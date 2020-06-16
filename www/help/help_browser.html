@@ -1,0 +1,66 @@
+<h3 id="help_browser"><b>Browser page</b></h3>
+<p>Due to computational restriction, the genome browser will be loaded within a window of <span>&#177;</span>1Mb before and after the chromosome coordinates or the gene selected.<br>
+The genome browser window can be navigated. Clicking on a region/variant/gene/trascript gives several informations about it into table format that can be copied or downloaded using different file formats.
+<br><br>
+<figure><img src="./help/browser.png" width="75%"><figcaption>Fig 3 - Browser page examples</figcaption></figure>
+</p>
+
+<br><br>
+<h4 id="help_fileHeader"><b>Files header</b></h4>
+<h3>Gene/Transcript elements</h3>
+<p>
+The headers of the downloaded files are automatically generated based on the <i>Ensembl based annotation package</i> (<a hre="https://bioconductor.org/packages/release/data/annotation/html/EnsDb.Hsapiens.v75.html">EnsDb.Hsapiens.v75</a> for GRCh37/hg19 genome assembly and <a href="https://bioconductor.org/packages/release/data/annotation/html/EnsDb.Hsapiens.v86.html">EnsDb.Hsapiens.v86</a> for GRCh38/hg38 genome assembly).
+<br><br>
+For more information please refer to official documentation at Ensembl portal: <a href="http://www.ensembl.org/info/genome/genebuild/index.html">Gene annotation in Ensembl</a>
+</p>
+<br>
+<h3>Consensus regions</h3>
+<p>
+<table>
+<tbody>
+<tr>
+<td>&nbsp;seqnames</td>
+<td>&nbsp;The name of the chromosome</td>
+</tr>
+<tr>
+<td>&nbsp;start</td>
+<td>&nbsp;The starting position of the feature in the chromosome</td>
+</tr>
+<tr>
+<td>&nbsp;end</td>
+<td>&nbsp;The ending position of the feature in the chromosome </td>
+</tr>
+<tr>
+<td>&nbsp;width</td>
+<td>&nbsp;The size of the region in base-pair (bp)</td>
+</tr>
+<tr>
+<td>&nbsp;strand</td>
+<td>&nbsp;Defines the strand. Either "*" (=no strand) or "+" or "-"</td>
+</tr>
+<tr>
+<td>&nbsp;presence.referenceDB</td>
+<td>&nbsp;The list of resources that provide an overlap between the consensus region and the regulatory regions provided by reference resources</td>
+</tr>
+</tbody>
+</table>
+<br>
+<h3>TBA info</h3>
+<table>
+<tbody>
+<tr>
+<td>&nbsp;p.value</td>
+<td>&nbsp;The p-value selected for the TBA</td>
+</tr>
+<tr>
+<td>&nbsp;TF_Symbol_and_Code</td>
+<td>&nbsp;For the specific motif, the Transcription factor represented by the motif and 
+in parentheses the ID of the motif</td>
+</tr>
+<tr>
+<td>&nbsp;ALL_1000GP</td>
+<td>&nbsp;the fraction of common alleles among 1,000 Genomes Project individuals that support TFs TBA enrichment</td>
+</tr>
+</tbody>
+</table>
+</p>
