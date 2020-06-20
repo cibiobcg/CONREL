@@ -1,6 +1,7 @@
 source("./global.R")
 tag = span(class = "logo-lg")
-child = img(class = "logo-lg", src="CONREL_LOGO_CORNER.svg",width = "100%", height = "auto")
+child = tagList(div(img(class = "logo-lg", src="CONREL_LOGO_CORNER.svg",width = "100%", height = "auto",style="float: left;display:inline-block;margin-left:-25px;")),
+            div(span(h5(hg_assembly,style="font-weight: 900;"),style="float: left;display:inline-block;margin-left:-20px;")))
 tag2 = tagAppendChild(tag, child)
 
 ui <- dashboardPagePlus(

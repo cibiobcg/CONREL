@@ -4,6 +4,7 @@ if("EnsDb.Hsapiens.v75"%in%ip$Package){
   library(EnsDb.Hsapiens.v75)
   EnsDb <- EnsDb.Hsapiens.v75
   hg19 = fread(paste0(inputFolder,"data/hg19.chrom.bed"),data.table = F)
+  hg_assembly="hg19"
 } else if("EnsDb.Hsapiens.v86"%in%ip$Package){
   library(EnsDb.Hsapiens.v86)
   EnsDb <- EnsDb.Hsapiens.v86
@@ -12,6 +13,7 @@ if("EnsDb.Hsapiens.v75"%in%ip$Package){
   inputFolder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"
   TBA_folder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"
   hg19 = fread(paste0(inputFolder,"data/hg38.chrom.bed"),data.table = F)
+  hg_assembly="hg38"
 }
 
 # Ensembl data
