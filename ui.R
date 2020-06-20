@@ -273,43 +273,6 @@ ui <- dashboardPagePlus(
                     ))
                   ),
                   
-                  # tabItem(
-                  #   tabName = "input",
-                  #   fluidRow(
-                  #     boxPlus(width=5,title = "Input Tab",closable = F,
-                  #             status = "info", solidHeader = TRUE
-                  #             
-                  #             
-                  #     ),
-                  #     box(width=3,title = "Cell-lines Tree selection",
-                  #         status = "info", solidHeader = TRUE,
-                  #         conditionalPanel(condition = 'input.consensus.includes("cell-line")',
-                  #                          shinyTree("tree", checkbox = TRUE,theme = 'proton',themeIcons = F,themeDots = F)),
-                  #         uiOutput("cellWarning",class="custom-ui-warnings"),
-                  #     ),
-                  #     box(width = 4,title = "Search Tab",
-                  #         status = "warning", solidHeader = TRUE,
-                  #         textInput("region", "chromosome region", "chr7:139,424,940-141,784,100"),
-                  #         actionButton("Run", "Search by position"),hr(),
-                  #         selectizeInput('genes', label = "Gene symbol:",
-                  #                        choices = NULL, options = list(
-                  #                          placeholder = 'Select a gene',
-                  #                          maxItems = 1,multiple = F, searchConjunction = 'and')),
-                  #         actionButton("searchGenes", "Search by gene"),
-                  #         conditionalPanel(condition='input.menu == "hidden"',
-                  #                          selectInput(
-                  #                            inputId="selectData",
-                  #                            label=" ", selected = NULL,
-                  #                            choices=c( "title" )
-                  #                          )
-                  #         )
-                  #         
-                  #     )
-                  #   )
-                  # ),
-                  
-                  
-                  
                   tabItem(
                     tabName = "genome",
                     fluidPage(
@@ -340,7 +303,8 @@ ui <- dashboardPagePlus(
                       
                       box(width=12,includeHTML("www/about/about_cell.html")),
                       box(width=12,includeHTML("www/about/about_cre.html")),
-                      box(width=12,includeHTML("www/about/about_tf.html"))
+                      box(width=12,includeHTML("www/about/about_tf.html")),
+                      box(width=12,includeHTML("www/about/about_comparison.html"))
                     ))
                   ),
                   
@@ -371,7 +335,11 @@ ui <- dashboardPagePlus(
                       ),
                       box(width = 12,closable = F,title="Download other data",
                           status = "danger", solidHeader = F,
-                          includeHTML("www/download/download.html")
+                          includeHTML("www/download/download.html"),
+                          box(width=12,closable = F,collapsible = T,collapsed = T,title="Data in the download folder",
+                              status = "danger", solidHeader = F,
+                              includeHTML("www/download/download_info.html")
+                          )
                           )
                     ))
                   )

@@ -24,7 +24,7 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
                           " | bedtools intersect -wao -a stdin -b ",inputFolder,"data/referenceDB/reference_",splitFileName[2],".gz"),intern = T)
     refDB = data.frame(do.call(rbind, strsplit(refDB, "\t", fixed=TRUE)))
     presence = refDB %>% group_by(X1,X2,X3) %>% summarize(referenceDB = paste(sort(unique(X7)), collapse = ', '))
-    if(length(input$tba)>0){
+    if(length(input$tba)>0 & file.exists(paste0(inputFolder,"TBA_consensus/tissue_TBA/",gsub("union",loadDF[i,1],as.character(loadDF[i,2]))))){
       tba = system(paste0("tabix ",inputFolder,"TBA_consensus/tissue_TBA/",gsub("union",loadDF[i,1],as.character(loadDF[i,2]))," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
       tba_split = lapply(strsplit(tba, "\t", fixed=TRUE),function(x)if(length(x)<9){c(x,"")}else{x})
       tba = data.frame(do.call(rbind, tba_split),stringsAsFactors = F)
