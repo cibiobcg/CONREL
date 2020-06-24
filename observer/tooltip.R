@@ -117,27 +117,34 @@ var format_datatable = function(d) {
     
     if(nrow(df_tba)>0){
       res = lapply(rev(1:nrow(df_tba)),function(i) {
-        if(df_tba[i,2]!="%"){
+        if(df_tba[i,2]!=" ()%"){
           data.frame(p.value = paste0("< ",formatC(as.numeric(gsub("TBA_pvalue.","",df_tba[i,1])), format = "e", digits = 2)),
                      TF_Symbol_and_Code = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],
-                     ALL_1000GP = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][2],"/")[[1]])
-        }
+                     ALL_1000GP = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][2],"/")[[1]],
+                     GeneCard = paste0("<a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=",
+                                       sapply(strsplit(strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],"\\("),"[[",1),
+                                       "'>",
+                                       "<img style='width:25px' src='geneCard.png'> ",sapply(strsplit(strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],"\\("),"[[",1),
+                                       "</a>")
+                     )
+        }else{data.frame(p.value="",TF_Symbol_and_Code="",ALL_1000GP="",GeneCard="")}
       })
-      
       df_tba = do.call(rbind,res)
     } else {
       insertUI(
         selector = "#placeholder",
         where = "beforeBegin",
         ui = tags$div(
-          boxPlus(width = 12,collapsible = T,closable = F,title="Gene info:",
+          boxPlus(width = 12,collapsible = T,closable = F,title="Element info:",
                   dataTableOutput("tTable")),
           id="regionTab"
         )
       )
     }
-    df_tba = datatable(df_tba,selection = 'none',filter = 'top',rownames = FALSE,extensions = 'Buttons',
-                       options = list(paging = TRUE,
+    df_tba = datatable(df_tba,selection = 'none',filter = 'top',rownames = FALSE,extensions = 'Buttons',escape=F,
+                       options = list(columnDefs = list(list(
+                         targets = c(3), searchable = FALSE
+                       )),paging = TRUE,
                                       searching = TRUE,
                                       dom = 'tBfrtip',
                                       buttons = list('copy',
@@ -189,7 +196,7 @@ var format_datatable = function(d) {
     # df <- df[, list(cars=list(.SD)), by = list(mpg,cyl)]
   } else {
     if("entrezid"%in%df$label) {
-      title = "Gene info:"
+      title = "Element info:"
     } else {
       title = "Region info:"
     }
