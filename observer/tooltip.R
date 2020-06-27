@@ -130,6 +130,7 @@ var format_datatable = function(d) {
                      )
         }else{data.frame(p.value="",TF_Symbol_and_Code="",ALL_1000GP="",GeneCard="")}
       })
+      df_tba = df_tba %>% dplyr::mutate(TF_Symbol_and_Code=paste0("<b>",gsub("\\(","</b><br>(",gsub("\\|",", ",TF_Symbol_and_Code))))
       df_tba = do.call(rbind,res)
     } else {
       insertUI(
@@ -142,7 +143,7 @@ var format_datatable = function(d) {
         )
       )
     }
-    df_tba = datatable(df_tba %>% dplyr::mutate(TF_Symbol_and_Code=paste0("<b>",gsub("\\(","</b><br>(",gsub("\\|",", ",TF_Symbol_and_Code)))),
+    df_tba = datatable(df_tba,
                        selection = 'none',filter = 'top',rownames = FALSE,extensions = 'Buttons',escape=F,
                        options = list(columnDefs = list(list(
                          targets = c(3), searchable = FALSE
