@@ -142,7 +142,7 @@ var format_datatable = function(d) {
         )
       )
     }
-    df_tba = datatable(data <- df_tba %>% dplyr::select(TF_Symbol_and_Code) %>% dplyr::mutate(TF_Symbol_and_Code=paste0("<b>",gsub("\\(","</b><br>(",gsub("\\|",", ",TF_Symbol_and_Code)))),
+    df_tba = datatable(df_tba %>% dplyr::mutate(TF_Symbol_and_Code=paste0("<b>",gsub("\\(","</b><br>(",gsub("\\|",", ",TF_Symbol_and_Code)))),
                        selection = 'none',filter = 'top',rownames = FALSE,extensions = 'Buttons',escape=F,
                        options = list(columnDefs = list(list(
                          targets = c(3), searchable = FALSE
