@@ -5,6 +5,8 @@ if("EnsDb.Hsapiens.v75"%in%ip$Package){
   EnsDb <- EnsDb.Hsapiens.v75
   hg19 = fread(paste0(inputFolder,"data/hg19.chrom.bed"),data.table = F)
   hg_assembly="hg19"
+  
+  tagWorkInProgress = tagList(NULL)
 } else if("EnsDb.Hsapiens.v86"%in%ip$Package){
   library(EnsDb.Hsapiens.v86)
   EnsDb <- EnsDb.Hsapiens.v86
@@ -14,6 +16,12 @@ if("EnsDb.Hsapiens.v75"%in%ip$Package){
   TBA_folder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"
   hg19 = fread(paste0(inputFolder,"data/hg38.chrom.bed"),data.table = F)
   hg_assembly="hg38"
+  
+  tagWorkInProgress = tagList(div(style="border:2px red dotted;",
+                                  p(style="font-size:16px;font-weight:bold;text-align: justify; text-justify: inter-word;",
+                                    "ATTENTION! WORK IN PROGESS"),
+                                  p(style="font-size:16px;font-weight:bold;text-align: justify; text-justify: inter-word;",
+                                    "The GRCh38 version of CONREL is online but not fully functional. Some TBA annotations are still on processing, then the TBA informations will not show for those CREs.")))
 }
 
 # Ensembl data

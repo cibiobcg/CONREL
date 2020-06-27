@@ -118,13 +118,14 @@ var format_datatable = function(d) {
     if(nrow(df_tba)>0){
       res = lapply(rev(1:nrow(df_tba)),function(i) {
         if(df_tba[i,2]!=" ()%"){
+          TF_name = lapply(sapply(strsplit(strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],"\\("),"[[",1),function(x)if(grepl("\\|",x)){strsplit(x,"\\|")[[1]][1]}else{x})
           data.frame(p.value = paste0("< ",formatC(as.numeric(gsub("TBA_pvalue.","",df_tba[i,1])), format = "e", digits = 2)),
                      TF_Symbol_and_Code = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],
                      ALL_1000GP = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][2],"/")[[1]],
                      GeneCard = paste0("<a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=",
-                                       sapply(strsplit(strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],"\\("),"[[",1),
+                                       TF_name,
                                        "'>",
-                                       "<img style='width:25px' src='geneCard.png'> ",sapply(strsplit(strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],"\\("),"[[",1),
+                                       "<img style='width:25px' src='geneCard.png'> ",TF_name,
                                        "</a>")
                      )
         }else{data.frame(p.value="",TF_Symbol_and_Code="",ALL_1000GP="",GeneCard="")}
@@ -141,7 +142,8 @@ var format_datatable = function(d) {
         )
       )
     }
-    df_tba = datatable(df_tba,selection = 'none',filter = 'top',rownames = FALSE,extensions = 'Buttons',escape=F,
+    df_tba = datatable(df_tba %>% dplyr::mutate(TF_Symbol_and_Code=paste0("<b>",gsub("\\(","</b><br>(",gsub("\\|",", ",TF_Symbol_and_Code)))),
+                       selection = 'none',filter = 'top',rownames = FALSE,extensions = 'Buttons',escape=F,
                        options = list(columnDefs = list(list(
                          targets = c(3), searchable = FALSE
                        )),paging = TRUE,
@@ -162,7 +164,7 @@ var format_datatable = function(d) {
           selector = "#placeholder",
           where = "afterEnd",
           ui = tags$div(
-            boxPlus(width = 6,title = "TBA info:",collapsible = T,closable = F,
+            boxPlus(width = 7,title = "TBA info:",collapsible = T,closable = F,
                     dataTableOutput("tbaTable")),
             id="tbaTab"
           )
@@ -171,7 +173,7 @@ var format_datatable = function(d) {
           selector = "#placeholder",
           where = "beforeBegin",
           ui = tags$div(
-            boxPlus(width = 6,collapsible = T,closable = F,title="Region info:",
+            boxPlus(width = 5,collapsible = T,closable = F,title="Element info:",
                     dataTableOutput("tTable"),hr(),
                     dataTableOutput("cellTable")),
             id="regionTab"

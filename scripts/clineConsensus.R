@@ -13,8 +13,8 @@ tx_cCons = lapply(1:nrow(loadDF),function(i){
     refDB = system(paste0("tabix ",inputFolder,"consensus/",loadDF[i,1],"Peaks/bgz_consensus/",as.character(loadDF[i,2])," ",elements[1],":",window_load[1],"-",window_load[2]," | bedtools merge -i stdin",
                           " | bedtools intersect -wao -a stdin -b ",inputFolder,"data/referenceDB/reference_",splitFileName[3],".gz"),intern = T)
     refDB = data.frame(do.call(rbind, strsplit(refDB, "\t", fixed=TRUE)))
-    presence = refDB %>% group_by(X1,X2,X3) %>% summarize(referenceDB = paste(sort(unique(X7)), collapse = ', '))
-    cCons = cbind(cCons,presence$referenceDB,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"cell"),collapse="%"))
+    overlap = refDB %>% group_by(X1,X2,X3) %>% summarize(referenceDB = paste(sort(unique(X7)), collapse = ', '))
+    cCons = cbind(cCons,overlap$referenceDB,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"cell"),collapse="%"))
     colnames(cCons) = c(colnames(cCons)[1:(length(colnames(cCons))-1)],"typeCRE")
     GRanges_ccons = makeGRangesFromDataFrame(cCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
     FeatureTrack(

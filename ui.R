@@ -107,7 +107,7 @@ ui <- dashboardPagePlus(
                                   factors on whole consensus region sequences is here fully exploited to characterize and
                                   annotate functional properties of regulatory elements. CONREL can be used to explore genomic
                                   loci, genes or genomic regions of interest across different cell lines and tissues.",style="text-align: justify; text-justify: inter-word;")
-                                  ))
+                                  ,br(),br(),tagWorkInProgress))
                     )),
                   
                   

@@ -21,7 +21,7 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
     refDB = system(paste0("tabix ",inputFolder,"consensus/",loadDF[i,1],"Peaks/bgz_globalConsensus/",loadDF[i,2],".union.bed.gz ",elements[1],":",window_load[1],"-",window_load[2],
                           " | bedtools intersect -wao -a stdin -b ",inputFolder,"data/referenceDB/reference_",loadDF[i,2],".gz"),intern = T)
     refDB = data.frame(do.call(rbind, strsplit(refDB, "\t", fixed=TRUE)))
-    presence = refDB %>% group_by(X1,X2,X3) %>% summarize(referenceDB = paste(sort(unique(X7)), collapse = ', '))
+    overlap = refDB %>% group_by(X1,X2,X3) %>% summarize(referenceDB = paste(sort(unique(X7)), collapse = ', '))
     if(length(input$tba)>0 & file.exists(paste0(inputFolder,"TBA_consensus/global_TBA/",loadDF[i,2],".",loadDF[i,1],".bed.gz"))){
       tba = system(paste0("tabix ",inputFolder,"TBA_consensus/global_TBA/",loadDF[i,2],".",loadDF[i,1],".bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
       tba_split = lapply(strsplit(tba, "\t", fixed=TRUE),function(x)if(length(x)<9){c(x,"")}else{x})
@@ -45,7 +45,7 @@ tx_gCons = lapply(1:nrow(loadDF),function(i){
       colnames(gCons) = c(colnames(gCons)[1:3],paste0("TBA_pvalue<",input$pvalues))
       # colnames(gCons) = c(colnames(gCons)[1:3],paste0("TBA_pvalue<",c("0.1","0.05","0.01","0.001","0.0001","0.00001")))
     }
-    gCons = cbind(gCons,presence$referenceDB,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"global"),collapse="%"))
+    gCons = cbind(gCons,overlap$referenceDB,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"global"),collapse="%"))
     colnames(gCons) = c(colnames(gCons)[1:(length(colnames(gCons))-1)],"typeCRE")
     GRanges_gcons = makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
     FeatureTrack(
