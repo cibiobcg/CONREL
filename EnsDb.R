@@ -22,6 +22,7 @@ if("EnsDb.Hsapiens.v75"%in%ip$Package){
                                     "ATTENTION! WORK IN PROGESS"),
                                   p(style="font-size:16px;font-weight:bold;text-align: justify; text-justify: inter-word;",
                                     "The GRCh38 version of CONREL is online but not fully functional. Some TBA annotations are still on processing, then the TBA informations will not show for those CREs.")))
+  tagWorkInProgress = tagList(NULL)
 }
 
 # Ensembl data
