@@ -1,15 +1,15 @@
 ip = as.data.frame(installed.packages()[,c(1,3:4)])
 ip = ip[is.na(ip$Priority),1:2,drop=FALSE]
 if("EnsDb.Hsapiens.v75"%in%ip$Package){
-  library(EnsDb.Hsapiens.v75)
-  EnsDb <- EnsDb.Hsapiens.v75
+  # library(EnsDb.Hsapiens.v75)
+  EnsDb <- EnsDb.Hsapiens.v75::EnsDb.Hsapiens.v75
   hg19 = fread(paste0(inputFolder,"data/hg19.chrom.bed"),data.table = F)
   hg_assembly="hg19"
   
   tagWorkInProgress = tagList(NULL)
 } else if("EnsDb.Hsapiens.v86"%in%ip$Package){
-  library(EnsDb.Hsapiens.v86)
-  EnsDb <- EnsDb.Hsapiens.v86
+  # library(EnsDb.Hsapiens.v86)
+  EnsDb <- EnsDb.Hsapiens.v86::EnsDb.Hsapiens.v86
   base_path = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"
   encodeFolder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/consensus/"
   inputFolder = "/shares/CIBIO-Storage/BCGLAB/CONRELhg38/"

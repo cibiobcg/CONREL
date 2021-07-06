@@ -5,7 +5,7 @@ server <- function(input, output, session) {
   source(file.path("observer", "backButton.R"),  local = TRUE)$value
   ### Observed events for zoom/drag/update on track and update the input field
   source(file.path("observer", "regionUpdate.R"),  local = TRUE)$value
-  
+
   ###############
   ### TOOLTIP ###
   ###############
@@ -77,7 +77,8 @@ server <- function(input, output, session) {
   #source(file.path("observer", "comptrack_region.R"),  local = TRUE)$value
   # Observer that generates the Composite track by gene selection
   #source(file.path("observer", "comptrack_gene.R"),  local = TRUE)$value
-  
+  ### Observed for genome load position given the position from the GET
+  source(file.path("observer", "polympactGET.R"),  local = TRUE)$value
   
   ################
   ### DOWNLOAD ###

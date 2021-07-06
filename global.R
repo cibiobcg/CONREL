@@ -12,7 +12,8 @@ library(dplyr)
 
 library(TnT)
 
-library(biovizBase)
+# library(biovizBase)
+library(AnnotationFilter)
 library(GenomicFeatures)
 
 options(scipen = 999)

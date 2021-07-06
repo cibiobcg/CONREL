@@ -34,6 +34,7 @@ ui <- dashboardPagePlus(
                 #menuItemOutput("outSearch"),
                 menuItem("Search", tabName = "search1",icon = icon("search")),
                 conditionalPanel(condition='input.menu == "hidden2"',menuItem(NULL, tabName = "search2")),
+                conditionalPanel(condition='input.menu == "hiddenError"',menuItem(NULL, tabName = "errorTab")),
                 menuItemOutput("outGenome"),
                 # hr(),uiOutput("seq_link"),
                 # downloadButton('download',"Download the data",style="color: #fff; background-color: #006502; border-color: #2e6da4"),
@@ -273,7 +274,7 @@ ui <- dashboardPagePlus(
                       )
                     ))
                   ),
-                  
+
                   tabItem(
                     tabName = "genome",
                     fluidPage(
@@ -283,6 +284,23 @@ ui <- dashboardPagePlus(
                     )
                   ),
                   
+                  tabItem(
+                    tabName = "errorTab",
+                    fluidPage(
+                      width = 12,
+                      p('ERROR')
+                    )
+                  ),
+
+                  tabItem(
+                    tabName = "spinning",
+                    fluidPage(
+                      width = 12,
+                      actionButton(width="100%","searchSetting_bottom", "Search", icon = icon("search"))
+                      
+                    )
+                  ),
+
                   tabItem(
                     tabName = "about",
                     fluidPage(column(
