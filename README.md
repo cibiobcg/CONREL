@@ -6,6 +6,8 @@ The genome browser is implemented using a slightly modified version of the "Inte
 
 ## Changelog
 
+v2
+
 v1.1
  - Added hg38 version and resources download
  - Fixed bugs
