@@ -6,8 +6,12 @@ The genome browser is implemented using a slightly modified version of the "Inte
 
 ## Changelog
 
+v2
+ - Improved UI: changed the 
+ - Added mouse mm10
+
 v1.1
- - Added hg38 version and resources download
+ - Added hg38 version and download data
  - Fixed bugs
  - Improved UI
  
