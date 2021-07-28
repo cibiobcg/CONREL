@@ -137,7 +137,7 @@ var format_datatable = function(d) {
         selector = "#placeholder",
         where = "beforeBegin",
         ui = tags$div(
-          boxPlus(width = 12,collapsible = T,closable = F,title="Element info:",
+          box(width = 12,collapsible = T,closable = F,title="Element info:",
                   dataTableOutput("tTable")),
           id="regionTab"
         )
@@ -165,7 +165,7 @@ var format_datatable = function(d) {
           selector = "#placeholder",
           where = "afterEnd",
           ui = tags$div(
-            boxPlus(width = 7,title = "TBA info:",collapsible = T,closable = F,
+            box(width = 7,title = "TBA info:",collapsible = T,closable = F,
                     dataTableOutput("tbaTable")),
             id="tbaTab"
           )
@@ -174,7 +174,7 @@ var format_datatable = function(d) {
           selector = "#placeholder",
           where = "beforeBegin",
           ui = tags$div(
-            boxPlus(width = 5,collapsible = T,closable = F,title="Element info:",
+            box(width = 5,collapsible = T,closable = F,title="Element info:",
                     dataTableOutput("tTable"),hr(),
                     dataTableOutput("cellTable")),
             id="regionTab"
@@ -207,7 +207,7 @@ var format_datatable = function(d) {
       selector = "#placeholder",
       where = "beforeBegin",
       ui = tags$div(
-        boxPlus(width = 12,collapsible = T,closable = F,title=title,
+        box(width = 12,collapsible = T,closable = F,title=title,
                 dataTableOutput("tTable"),hr(),
                 dataTableOutput("cellTable")),
         id="regionTab"

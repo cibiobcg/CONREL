@@ -1,11 +1,15 @@
 server <- function(input, output, session) {
   if(simpleDebug){print("Start server")}
   
+  ### modal for choosing 
+  source(file.path("observer", "chooseORG.R"),  local = TRUE)$value
+  
+  
   ### Observed events for back button in search tab
   source(file.path("observer", "backButton.R"),  local = TRUE)$value
   ### Observed events for zoom/drag/update on track and update the input field
   source(file.path("observer", "regionUpdate.R"),  local = TRUE)$value
-
+  
   ###############
   ### TOOLTIP ###
   ###############
@@ -29,7 +33,7 @@ server <- function(input, output, session) {
   ################
   ### ASSEMBLY ###
   ################
-  source(file.path("observer","assembly.R"), local = TRUE)$value
+  # source(file.path("observer","assembly.R"), local = TRUE)$value
   
   
   ###############################
@@ -128,5 +132,9 @@ server <- function(input, output, session) {
     track()
   })
   
-
+  showModal(dataModal())
+  hide("loading_page")
+  checkFolderAssembly()
+  
 }
+

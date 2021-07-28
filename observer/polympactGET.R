@@ -2,7 +2,18 @@
 observe({
   query <- parseQueryString(session$clientData$url_search)
   if ((!is.null(query[['rsID']]))&(!is.null(query[['tissue']]))&(!is.null(query[['peak']]))) {
-    Sys.sleep(2)
+    shinyjs::hide("main_content")
+    shinyjs::show("loading_page")
+    
+    assembly = query[['version']]
+    
+    if (is.null(assembly)){
+      assembly='hg19'
+    } else if (!assembly%in%c('hg19','hg38')){
+      assembly='hg19'
+    }
+    loadAssemblyData(assembly)
+    
     withProgress(message = 'Generating plot', value = 0, {
       incProgress(0.2,detail = "Searching variant position")
       
@@ -185,6 +196,6 @@ observe({
       ## pass in appropriate div id
       selector = '#regionTab'
     )
-    
+      removeModal()
   }
 })

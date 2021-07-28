@@ -6,10 +6,10 @@ observeEvent(input$positionStart,ignoreInit = F,{
                                                     prettyNum(input$positionEnd,big.mark = ","))
   )
   #Update the URL for DAS server to obtain the sequence
-  url <- a("DNA sequence",
-           href=paste0(dasServer,"?segment=",elements[1],":",input$positionStart,",",input$positionEnd), target="_blank")
-  updateActionButton(session,inputId = "seq_DAS")
-  output$seq_link <- renderUI({
-    tagList(url)
-  })
+  # url <- a("DNA sequence",
+  #          href=paste0(dasServer,"?segment=",elements[1],":",input$positionStart,",",input$positionEnd), target="_blank")
+  # updateActionButton(session,inputId = "seq_DAS")
+  # output$seq_link <- renderUI({
+  #   tagList(url)
+  # })
 })
