@@ -23,7 +23,7 @@ observeEvent(input$example1, ignoreInit = T,{
     
     ##############################################################
     
-    elements <<- convertPosition(region,TRUE)
+    elements <<- convertPosition(regionEx1,TRUE)
     
     
     window_load = window2Load(elements)
@@ -37,11 +37,11 @@ observeEvent(input$example1, ignoreInit = T,{
       chr_geneView = elements[1]
     }
     
-    gene <- genes(EnsDb,
-                  filter=AnnotationFilterList(GeneStartFilter(start_geneView,condition = '>'),
-                                              GeneEndFilter(end_geneView,condition = '<'),
-                                              SeqNameFilter(chr_geneView),
-                                              logicOp = c('&','&')))
+    gene <- ensembldb::genes(EnsDb,
+                             filter=AnnotationFilter::AnnotationFilterList(AnnotationFilter::GeneStartFilter(start_geneView,condition = '>'),
+                                                                           AnnotationFilter::GeneEndFilter(end_geneView,condition = '<'),
+                                                                           AnnotationFilter::SeqNameFilter(chr_geneView),
+                                                                           logicOp = c('&','&')))
     tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
                             names = paste(gene$symbol, " (", gene$gene_biotype, ")", sep = ""),
                             color = mapColor[match(gene$gene_biotype,levelsColor)],
@@ -57,7 +57,7 @@ observeEvent(input$example1, ignoreInit = T,{
     tx = append(tx,track_snps)
     
     ##############################################
-    emptyTrack = TnT::BlockTrack(GRanges(elements[1],IRanges(0,1)),
+    emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
                                  color = "#EEEEEE",background = "#EEEEEE",
                                  height = 12,label=NULL)
     tx = append(emptyTrack,tx)
@@ -76,8 +76,8 @@ observeEvent(input$example1, ignoreInit = T,{
       if(nrow(gCons)==0){
         generateEmptyTrack(elements[1])
       } else {
-        GRanges_gcons = makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
-        FeatureTrack(
+        GRanges_gcons = GenomicRanges::makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
+        TnT::FeatureTrack(
           GRanges_gcons,
           tooltip = as.data.frame(GRanges_gcons),
           label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
@@ -88,10 +88,10 @@ observeEvent(input$example1, ignoreInit = T,{
     tx = append(tx,tx_gCons)
     
     
-    trackRendered = TnTBoard(tx,
-                             view.range = GRanges(elements[1],IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
+    trackRendered = TnT::TnTBoard(tx,
+                             view.range = GenomicRanges::GRanges(elements[1],IRanges::IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
                              use.tnt.genome = T,
-                             coord.range = IRanges(window_load[1],window_load[2]))
+                             coord.range = IRanges::IRanges(window_load[1],window_load[2]))
     track(trackRendered)
   })
   clickPos <<- FALSE
@@ -132,7 +132,7 @@ observeEvent(input$example2, ignoreInit = T,{
     
     ##############################################################
     
-    elements <<- convertPosition(region,TRUE)
+    elements <<- convertPosition(regionEx2,TRUE)
     
     
     window_load = window2Load(elements)
@@ -146,11 +146,11 @@ observeEvent(input$example2, ignoreInit = T,{
       chr_geneView = elements[1]
     }
     
-    gene <- genes(EnsDb,
-                  filter=AnnotationFilterList(GeneStartFilter(start_geneView,condition = '>'),
-                                              GeneEndFilter(end_geneView,condition = '<'),
-                                              SeqNameFilter(chr_geneView),
-                                              logicOp = c('&','&')))
+    gene <- ensembldb::genes(EnsDb,
+                             filter=AnnotationFilter::AnnotationFilterList(AnnotationFilter::GeneStartFilter(start_geneView,condition = '>'),
+                                                                           AnnotationFilter::GeneEndFilter(end_geneView,condition = '<'),
+                                                                           AnnotationFilter::SeqNameFilter(chr_geneView),
+                                                                           logicOp = c('&','&')))
     tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
                             names = paste(gene$symbol, " (", gene$gene_biotype, ")", sep = ""),
                             color = mapColor[match(gene$gene_biotype,levelsColor)],
@@ -158,7 +158,7 @@ observeEvent(input$example2, ignoreInit = T,{
                             background = "#eeeeee",label = NULL)
     
     ##############################################
-    emptyTrack = TnT::BlockTrack(GRanges(elements[1],IRanges(0,1)),
+    emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
                                  color = "#EEEEEE",background = "#EEEEEE",
                                  height = 12,label=NULL)
     tx = append(emptyTrack,tx)
@@ -177,8 +177,8 @@ observeEvent(input$example2, ignoreInit = T,{
       if(nrow(gCons)==0){
         generateEmptyTrack(elements[1])
       } else {
-        GRanges_gcons = makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
-        FeatureTrack(
+        GRanges_gcons = GenomicRanges::makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
+        TnT::FeatureTrack(
           GRanges_gcons,
           tooltip = as.data.frame(GRanges_gcons),
           label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
@@ -199,8 +199,8 @@ observeEvent(input$example2, ignoreInit = T,{
       if(nrow(tCons)==0){
         generateEmptyTrack(elements[1])
       } else {
-        GRanges_tcons = makeGRangesFromDataFrame(tCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
-        FeatureTrack(
+        GRanges_tcons = GenomicRanges::makeGRangesFromDataFrame(tCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
+        TnT::FeatureTrack(
           GRanges_tcons,
           tooltip = as.data.frame(GRanges_tcons),
           label = paste0("tissue consensus tracks - ",splitFileName[1]," - ",splitFileName[2]," , ",loadDF[i,1]," peaks"),
@@ -211,10 +211,10 @@ observeEvent(input$example2, ignoreInit = T,{
     tx = append(tx,tx_tCons)
     
     
-    trackRendered = TnTBoard(tx,
-                             view.range = GRanges(elements[1],IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
+    trackRendered = TnT::TnTBoard(tx,
+                             view.range = GenomicRanges::GRanges(elements[1],IRanges::IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
                              use.tnt.genome = T,
-                             coord.range = IRanges(window_load[1],window_load[2]))
+                             coord.range = IRanges::IRanges(window_load[1],window_load[2]))
     track(trackRendered)
     
     

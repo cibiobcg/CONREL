@@ -66,10 +66,10 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
         elements <<- convertPosition(region,TRUE)
       }
       if(clickGene){
-        f = AnnotationFilter(~ (symbol == input$genes & chrFilter))
+        f = AnnotationFilter::AnnotationFilter(~ (symbol == input$genes & chrFilter))
         gr_tmp <- biovizBase::crunch(EnsDb, f)
         
-        elements <<- c(seqlevels(gr_tmp),min(start(gr_tmp)),max(end(gr_tmp)))
+        elements <<- c(ensembldb::seqlevels(gr_tmp),min(start(gr_tmp)),max(end(gr_tmp)))
       }
       
       window_load = window2Load(elements)
@@ -85,13 +85,13 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
         if(clickGene){
           start_geneView = min(start(gr_tmp))-increaseWindow
           end_geneView = max(end(gr_tmp))+increaseWindow
-          chr_geneView = seqlevels(gr_tmp)
+          chr_geneView = ensembldb::seqlevels(gr_tmp)
         }
-        gene <- genes(EnsDb,
-                      filter=AnnotationFilterList(GeneStartFilter(start_geneView,condition = '>'),
-                                                  GeneEndFilter(end_geneView,condition = '<'),
-                                                  SeqNameFilter(chr_geneView),
-                                                  logicOp = c('&','&')))
+        gene <- ensembldb::genes(EnsDb,
+                                 filter=AnnotationFilter::AnnotationFilterList(AnnotationFilter::GeneStartFilter(start_geneView,condition = '>'),
+                                                                               AnnotationFilter::GeneEndFilter(end_geneView,condition = '<'),
+                                                                               AnnotationFilter::SeqNameFilter(chr_geneView),
+                                                                               logicOp = c('&','&')))
         
         
         tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
@@ -99,7 +99,9 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
                                 color = mapColor[match(gene$gene_biotype,levelsColor)],
                                 #color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
                                 background = "#eeeeee",label = NULL)
-      } else {
+      } 
+      
+      else {
         if(simpleDebug){print("Load transcript track view")}
         # TRANSCRIPT track
         if(clickPos){
@@ -110,25 +112,25 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
         if(clickGene){
           start_transcriptView = min(start(gr_tmp))-increaseWindow
           end_transcriptView = max(end(gr_tmp))+increaseWindow
-          chr_transcriptView = seqlevels(gr_tmp)
+          chr_transcriptView = ensembldb::seqlevels(gr_tmp)
         }
         
         gr <- biovizBase::crunch(EnsDb,
-                                 GRanges(chr_transcriptView,IRanges(start_transcriptView,end_transcriptView)))
+                                 GenomicRanges::GRanges(chr_transcriptView,IRanges::IRanges(start_transcriptView,end_transcriptView)))
         tx <- TnT::TxTrackFromGRanges(gr, color = "grey2",label = NULL,background = "#eeeeee")
-        trackData(tx)$tooltip <- select(EnsDb,
+        TnT::trackData(tx)$tooltip <- ensembldb::select(EnsDb,
                                         keys = tx$tooltip$tx_id,
                                         keytype = "TXID",
                                         columns = c("GENEID", "SYMBOL", "TXBIOTYPE"))
-        trackData(tx)$color <- mapColor_tx[match(tx$tooltip$TXBIOTYPE,levelsColor_tx)]
+        TnT::trackData(tx)$color <- mapColor_tx[match(tx$tooltip$TXBIOTYPE,levelsColor_tx)]
         # trackData(tx)$color <- TnT::mapcol(tx$tooltip$TXBIOTYPE)
-        trackData(tx)$display_label <- TnT::strandlabel(
+        TnT::trackData(tx)$display_label <- TnT::strandlabel(
           paste(tx$tooltip$SYMBOL, tx$tooltip$TXBIOTYPE),
-          strand(TnT::trackData(tx)))
+          BiocGenerics::strand(TnT::trackData(tx)))
       }
       
       if(clickGene){
-        elements <<- c(paste0(seqlevelsInUse(gr_tmp)),min(start(gr_tmp)),max(end(gr_tmp)))  
+        elements <<- c(paste0(GenomeInfoDb::seqlevelsInUse(gr_tmp)),min(BiocGenerics::start(gr_tmp)),max(BiocGenerics::end(gr_tmp)))  
       }
       
       # TSS track
@@ -145,7 +147,7 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
       }
       
       ##############################################
-      emptyTrack = TnT::BlockTrack(GRanges(elements[1],IRanges(0,1)),
+      emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
                                    color = "#EEEEEE",background = "#EEEEEE",
                                    height = 12,label=NULL)
       tx = append(emptyTrack,tx)
@@ -171,10 +173,10 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
       }
       
       
-      trackRendered = TnTBoard(tx,
-                               view.range = GRanges(elements[1],IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
+      trackRendered = TnT::TnTBoard(tx,
+                               view.range = GenomicRanges::GRanges(elements[1],IRanges::IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
                                use.tnt.genome = T,
-                               coord.range = IRanges(window_load[1],window_load[2]))
+                               coord.range = IRanges::IRanges(window_load[1],window_load[2]))
       track(trackRendered)
     })
     clickPos <<- FALSE

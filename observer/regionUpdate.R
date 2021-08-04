@@ -1,5 +1,5 @@
 ### Observed events for zoom/drag/update on track and update the input field
-observeEvent(input$positionStart,ignoreInit = F,{
+observeEvent(input$positionStart,ignoreInit = T,{
   #Update the input box of region
   updateTextInput(session, "region", value = paste0(input$chr,":",
                                                     prettyNum(input$positionStart,big.mark = ","),"-",

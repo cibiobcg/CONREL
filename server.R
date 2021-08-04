@@ -127,7 +127,7 @@ server <- function(input, output, session) {
   )
   
   # Rendering of composite track
-  output$outcomp = renderTnT({
+  output$outcomp = TnT::renderTnT({
     if(simpleDebug){print("Rendering...")}
     track()
   })

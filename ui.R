@@ -9,9 +9,9 @@ child = tagList(div(img(class = "logo-lg",
                         width = "100%", 
                         height = "auto",
                         style="float: left;display:inline-block;margin-left:-25px;")),
-                    img(class='logo-sq',
-                        id='logo-sq',
-                        src = "empty_square.png"))
+                img(class='logo-sq',
+                    id='logo-sq',
+                    src = "empty_square.png"))
 tag2 = tagAppendChild(tag, child)
 
 ui <- dashboardPage(
@@ -65,7 +65,7 @@ ui <- dashboardPage(
   ############
   
   dashboardBody(
-    # setBackgroundImage(src = 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80', shinydashboard = TRUE),
+    # setBackgroundImage(src = 'background.png', shinydashboard = TRUE),
     
     tags$head(tags$style(HTML('
       .custom-ui-errors {
@@ -105,7 +105,67 @@ ui <- dashboardPage(
       .btn {
         border: 2px solid #aaaaaa;
       }
+      #boxsearch .box-header {
+        padding: 0 !important;
+        height: 0 !important;
+      }
+      #helpBox .box-header {
+        background-color: #1ab394;
+        color: white;
+      }
       
+      .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+      .styled-table thead tr {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: left;
+}
+      .styled-table th,
+      .styled-table td {
+        padding: 12px 15px;
+}
+      .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+}
+      .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+}
+      .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #009879;
+}
+      .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #009879;
+      }
+.borderd-content {
+  border: 1px solid #000000;
+  border-radius: 4px;
+  height: 300px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.borderd-content .title {
+  margin: -10px 0 0 10px;
+  background: #fff;
+  padding: 3px;
+  font-size: 1.5em;
+  display: inline-block;
+  font-weight: bold;
+  position: absolute;
+}
+
+.borderd-content .content {
+  padding: 10px;
+}
+
     '))),
     useShinyjs(),
     tabItems(
@@ -141,7 +201,7 @@ ui <- dashboardPage(
             box(width = 12,
                 title = "SEARCH BY CHROMOSOME POSITION",
                 #status = "warning", solidHeader = TRUE,
-                textInput("region", "Chromosome region:"),
+                textInput("region", "Chromosome region:",value = ''),
                 uiOutput("searchRegionError",class="custom-ui-errors"),
                 actionButton("searchButtonPos", "Search")
             ),
@@ -168,7 +228,7 @@ ui <- dashboardPage(
         tabName = "search2",
         fluidRow(column(
           width=12,offset=0,
-          box(width=12,
+          box(width=12,id='boxsearch',
               fluidRow(
                 column(
                   width=6,
@@ -275,7 +335,7 @@ ui <- dashboardPage(
                ))),
         fluidRow(column(
           width=12,offset=0,
-          box(width=12,
+          box(width=12,id='boxsearch',
               fluidRow(
                 column(
                   width=6,
@@ -294,7 +354,7 @@ ui <- dashboardPage(
         tabName = "genome",
         fluidPage(
           width = 12,
-          TnTOutput("outcomp",height = 'auto'),hr(),
+          TnT::TnTOutput("outcomp",height = 'auto'),hr(),
           tags$div(id = 'placeholder'),
         )
       ),
@@ -325,21 +385,27 @@ ui <- dashboardPage(
           valueBox(href = "#about_tf",width=3,"1,710","Transcription factor", color = "purple", icon = icon("share")),
           valueBox(href = "#about_cell",width=3,"1,398","ChIP-seq data", color = "green", icon = icon("signal")),
           valueBox(href = "#about_cre",width=3,"1.5 million","genome regulatory elements", color = "blue", icon = icon("align-center")),
-          column(width=5,box(width=12,closable = F,title="Datasets sources",
-                             status = "danger", solidHeader = F,
-                             includeHTML("www/about/about_dataset.html")
+          column(width=5,
+                 box(width=12,closable = F,title="Datasets sources",id = 'helpBox',
+                     status = "danger", solidHeader = F,
+                     includeHTML("www/about/about_dataset.html")
+                 ),
+                 # box(width=12,closable = F,title="liftOver GRCh38/hg38",
+                 #     status = "danger", solidHeader = F,
+                 #     includeHTML("www/about/about_hg38.html")
+                 # )
           ),
-          # box(width=12,closable = F,title="liftOver GRCh38/hg38",
-          #     status = "danger", solidHeader = F,
-          #     includeHTML("www/about/about_hg38.html")
-          # )
-          ),
-          box(width=7,title='Workflow',includeHTML("www/about/about.html")),
+          box(width=7,title='Workflow',id = 'helpBox',
+              includeHTML("www/about/about.html")),
           
-          box(width=12,title='ChIP-seq data',includeHTML("www/about/about_cell.html")),
-          box(width=12,title='Cis-regulatory elements',includeHTML("www/about/about_cre.html")),
-          box(width=12,title='TF and TFBS motifs',includeHTML("www/about/about_tf.html")),
-          box(width=12,title='Comparison resources',includeHTML("www/about/about_comparison.html"))
+          box(width=12,title='ChIP-seq data',id = 'helpBox',
+              includeHTML("www/about/about_cell.html")),
+          box(width=12,title='Cis-regulatory elements',id = 'helpBox',
+              includeHTML("www/about/about_cre.html")),
+          box(width=12,title='TF and TFBS motifs',id = 'helpBox',
+              includeHTML("www/about/about_tf.html")),
+          box(width=12,title='Comparison resources',id = 'helpBox',
+              includeHTML("www/about/about_comparison.html"))
         ))
       ),
       
@@ -347,36 +413,54 @@ ui <- dashboardPage(
         tabName = "help",
         fluidPage(column(
           width = 12,offset=0,
-          box(width=12,includeHTML("www/help/help.html")),
-          box(width=12,includeHTML("www/help/help_start.html")),
-          box(width=12,includeHTML("www/help/help_search.html")),
-          box(width=12,includeHTML("www/help/help_setting.html")),
-          box(width=12,includeHTML("www/help/help_browser.html"))
+          box(width=12,title='What is CONREL',id = 'helpBox',
+              includeHTML("www/help/help.html")),
+          box(width=12,title='Starting point',id = 'helpBox',
+              includeHTML("www/help/help_start.html")),
+          box(width=12,title='Search page',id = 'helpBox',
+              includeHTML("www/help/help_search.html")),
+          box(width=12,title='Setting page',id = 'helpBox',
+              includeHTML("www/help/help_setting.html")),
+          box(width=12,title='Browser page',id = 'helpBox',
+              includeHTML("www/help/help_browser.html"))
         ))
       ),
       
       tabItem(
         tabName = "singularity",
-        fluidPage(column(
-          width=12,
-          box(width = 12,closable = F,title="Download singularity image",
-              status = "danger", solidHeader = F,
-              includeHTML("www/download/singularity.html"),
-              box(width=12,closable = F,collapsible = T,collapsed = T,title="How to install and run singularity image",
-                  status = "danger", solidHeader = F,
-                  includeHTML("www/download/singularity_info.html")
-                  
-              )
-          ),
-          box(width = 12,closable = F,title="Download other data",
-              status = "danger", solidHeader = F,
+        fluidPage(
+          # column(
+          #   width=12,
+          #   box(width = 12,closable = F,title="Download singularity image",id = 'helpBox',
+          #       status = "danger", solidHeader = F,
+          #       includeHTML("www/download/singularity.html"),
+          #       box(width=12,closable = F,collapsible = T,collapsed = T,title="How to install and run singularity image",
+          #           status = "danger", solidHeader = F,
+          #           includeHTML("www/download/singularity_info.html")
+          #           
+          #       )
+          #   ),
+          #   box(width = 12,closable = F,title="Download other data",id = 'helpBox',
+          #       status = "danger", solidHeader = F,
+          #       includeHTML("www/download/download.html"),
+          #       box(width=12,closable = F,collapsible = T,collapsed = T,title="Data in the download folder",
+          #           status = "danger", solidHeader = F,
+          #           includeHTML("www/download/download_info.html")
+          #       )
+          #   )
+          # )
+          box(title = 'Download singularity image and data',id = 'helpBox',
+              width=12,
+              h2('Download resources'),
               includeHTML("www/download/download.html"),
-              box(width=12,closable = F,collapsible = T,collapsed = T,title="Data in the download folder",
-                  status = "danger", solidHeader = F,
-                  includeHTML("www/download/download_info.html")
-              )
+              includeHTML("www/download/download_info.html"),
+              hr(),
+              h2('Download singularity app'),
+              includeHTML("www/download/singularity.html"),
+              h2('How to install and use it'),
+              includeHTML("www/download/singularity_info.html")
           )
-        ))
+        )
       )
     )
   )

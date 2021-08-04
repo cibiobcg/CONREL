@@ -23,7 +23,7 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
     refDB = system(paste0("tabix ",inputFolder,"consensus/",loadDF[i,1],"Peaks/bgz_tissueConsensus/",as.character(loadDF[i,2])," ",elements[1],":",window_load[1],"-",window_load[2],
                           " | bedtools intersect -wao -a stdin -b ",inputFolder,"data/referenceDB/reference_",splitFileName[2],".gz"),intern = T)
     refDB = data.frame(do.call(rbind, strsplit(refDB, "\t", fixed=TRUE)))
-    overlap = refDB %>% group_by(X1,X2,X3) %>% summarize(referenceDB = paste(sort(unique(X7)), collapse = ', '))
+    overlap = refDB %>% dplyr::group_by(X1,X2,X3) %>% dplyr::summarize(referenceDB = paste(sort(unique(X7)), collapse = ', '))
     if(length(input$tba)>0 & file.exists(paste0(inputFolder,"TBA_consensus/tissue_TBA/",gsub("union",loadDF[i,1],as.character(loadDF[i,2]))))){
       tba = system(paste0("tabix ",inputFolder,"TBA_consensus/tissue_TBA/",gsub("union",loadDF[i,1],as.character(loadDF[i,2]))," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
       tba_split = lapply(strsplit(tba, "\t", fixed=TRUE),function(x)if(length(x)<9){c(x,"")}else{x})
@@ -51,8 +51,8 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
     }
     tCons = cbind(tCons,overlap$referenceDB,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"tissue"),collapse="%"))
     colnames(tCons) = c(colnames(tCons)[1:(length(colnames(tCons))-1)],"typeCRE")
-    GRanges_tcons = makeGRangesFromDataFrame(tCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
-    FeatureTrack(
+    GRanges_tcons = GenomicRanges::makeGRangesFromDataFrame(tCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
+    TnT::FeatureTrack(
       GRanges_tcons,
       tooltip = as.data.frame(GRanges_tcons),
       label = paste0("tissue consensus tracks - ",splitFileName[1]," - ",splitFileName[2]," , ",loadDF[i,1]," peaks"),

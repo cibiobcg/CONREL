@@ -1,5 +1,5 @@
 # Observer that listens to changes in tooltip (click on a regions, Shiny.onInputChange() in javascript)
-observeEvent(input$tooltipTable, {
+observeEvent(input$tooltipTable, ignoreInit = T, {
   removeUI(
     ## pass in appropriate div id
     selector = '#tbaTab'

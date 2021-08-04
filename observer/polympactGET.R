@@ -12,7 +12,7 @@ observe({
     } else if (!assembly%in%c('hg19','hg38')){
       assembly='hg19'
     }
-    loadAssemblyData(assembly)
+    loadAssemblyData(assembly,session)
     
     withProgress(message = 'Generating plot', value = 0, {
       incProgress(0.2,detail = "Searching variant position")
@@ -70,11 +70,11 @@ observe({
           chr_geneView = elements[1]
         }
         
-        gene <- genes(EnsDb,
-                      filter=AnnotationFilterList(GeneStartFilter(start_geneView,condition = '>'),
-                                                  GeneEndFilter(end_geneView,condition = '<'),
-                                                  SeqNameFilter(chr_geneView),
-                                                  logicOp = c('&','&')))
+        gene <- ensembldb::genes(EnsDb,
+                                 filter=AnnotationFilter::AnnotationFilterList(AnnotationFilter::GeneStartFilter(start_geneView,condition = '>'),
+                                                                               AnnotationFilter::GeneEndFilter(end_geneView,condition = '<'),
+                                                                               AnnotationFilter::SeqNameFilter(chr_geneView),
+                                                                               logicOp = c('&','&')))
         tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
                                 names = paste(gene$symbol, " (", gene$gene_biotype, ")", sep = ""),
                                 color = mapColor[match(gene$gene_biotype,levelsColor)],
@@ -89,8 +89,8 @@ observe({
 ### Instead of loadSNPs function
         snps.filtered = system(paste0("tabix ",inputFolder,"dbSNP_v151_hg19/dbSNP_151_hg19_complete_TOPMED_ALL.bed.gz ",gsub("chr","",elements[1]),":",window_load[1],"-",window_load[2]),intern = T)
         snps.filtered = data.frame(do.call(rbind, strsplit(snps.filtered, "\t", fixed=TRUE)))
-        ir <- IRanges(start = as.numeric(as.character(snps.filtered$X2)), width = 1)
-        gpos <- GRanges(elements[1], ir)
+        ir <- IRanges::IRanges(start = as.numeric(as.character(snps.filtered$X2)), width = 1)
+        gpos <- GenomicRanges::GRanges(elements[1], ir)
         gpos$score <- rep(0.4,nrow(snps.filtered))
         idx_poly_snp = which(as.data.frame(gpos)$start == pos_poly)
         gpos$score[idx_poly_snp] <- 0.75
@@ -99,8 +99,8 @@ observe({
         snps.filtered$alleles = paste(snps.filtered$X4,snps.filtered$X5,sep=">")
         gtooltip <- snps.filtered[,c(3,6,7,8)]
         colnames(gtooltip) = c("rs ID", "1000G MAF", "TOPMED MAF", "Alleles")
-        pt = PinTrack(gpos,value = gpos$score,color = snps_colors,label = "dbSNP v151", domain = c(0,1), tooltip = gtooltip,background = "#eeeeee")
-        emptyTrack = TnT::BlockTrack(GRanges(elements[1],IRanges(0,1)),
+        pt = TnT::PinTrack(gpos,value = gpos$score,color = snps_colors,label = "dbSNP v151", domain = c(0,1), tooltip = gtooltip,background = "#eeeeee")
+        emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
                                      color = "#EEEEEE",background = "#EEEEEE",
                                      height = 15,label=NULL)
         track_snps = append(pt,emptyTrack)
@@ -108,7 +108,7 @@ observe({
         tx = append(tx,track_snps)
         
         ##############################################
-        emptyTrack = TnT::BlockTrack(GRanges(elements[1],IRanges(0,1)),
+        emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
                                      color = "#EEEEEE",background = "#EEEEEE",
                                      height = 12,label=NULL)
         tx = append(emptyTrack,tx)
@@ -134,8 +134,8 @@ observe({
             
             gCons = cbind(gCons,overlap$referenceDB,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"global"),collapse="%"))
             colnames(gCons) = c(colnames(gCons)[1:(length(colnames(gCons))-1)],"typeCRE")
-            GRanges_gcons = makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
-            FeatureTrack(
+            GRanges_gcons = GenomicRanges::makeGRangesFromDataFrame(gCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = T)
+            TnT::FeatureTrack(
               GRanges_gcons,
               tooltip = as.data.frame(GRanges_gcons),
               label = paste0("global consensus tracks - ",gsub("active","active enhancer",loadDF[i,2])," , ",loadDF[i,1]," peaks"),
@@ -164,8 +164,8 @@ observe({
             
             tCons = cbind(tCons,overlap$referenceDB,paste0(c(as.character(loadDF[i,1]),as.character(loadDF[i,2]),"tissue"),collapse="%"))
             colnames(tCons) = c(colnames(tCons)[1:(length(colnames(tCons))-1)],"typeCRE")
-            GRanges_tcons = makeGRangesFromDataFrame(tCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
-            FeatureTrack(
+            GRanges_tcons = GenomicRanges::makeGRangesFromDataFrame(tCons,seqnames.field="X1",start.field = "X2",end.field = "X3",keep.extra.columns = TRUE)
+            TnT::FeatureTrack(
               GRanges_tcons,
               tooltip = as.data.frame(GRanges_tcons),
               label = paste0("tissue consensus tracks - ",splitFileName[1]," - ",splitFileName[2]," , ",loadDF[i,1]," peaks"),
@@ -176,10 +176,10 @@ observe({
         tx = append(tx,tx_tCons)
         
         
-        trackRendered = TnTBoard(tx,
-                                 view.range = GRanges(elements[1],IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
+        trackRendered = TnT::TnTBoard(tx,
+                                 view.range = GenomicRanges::GRanges(elements[1],IRanges::IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
                                  use.tnt.genome = T,
-                                 coord.range = IRanges(window_load[1],window_load[2]))
+                                 coord.range = IRanges::IRanges(window_load[1],window_load[2]))
         track(trackRendered)
       } else {
         updateTabItems(session, "sideBar", "errorTab")
