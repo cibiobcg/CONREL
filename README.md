@@ -6,7 +6,7 @@ The genome browser is implemented using a slightly modified version of the "Inte
 
 ## Changelog
 
-v2
+v2 - Working in progress
  - Improved UI: changed the genome/assembly selection mode
  - Added mouse mm10
  - splitted download files into singularity image and data (to choose between desired organism/assembly). Changed the local singularity installation method
