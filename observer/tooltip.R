@@ -1,5 +1,5 @@
 # Observer that listens to changes in tooltip (click on a regions, Shiny.onInputChange() in javascript)
-observeEvent(input$tooltipTable, {
+observeEvent(input$tooltipTable, ignoreInit = T, {
   removeUI(
     ## pass in appropriate div id
     selector = '#tbaTab'
@@ -44,14 +44,14 @@ observeEvent(input$tooltipTable, {
     options = list(paging = FALSE,
                    searching = FALSE,
                    lengthChange = FALSE,
-                   dom = 'tBfrtp',
-                   buttons = list('copy',
-                                  list(extend='csv',
-                                       filename = 'cellLineInfo'),
-                                  list(extend='excel',
-                                       filename = 'cellLineInfo'),
-                                  list(extend='pdf',
-                                       filename= 'cellLineInfo')),
+                   dom = 't',
+                   # buttons = list('copy',
+                   #                list(extend='csv',
+                   #                     filename = 'cellLineInfo'),
+                   #                list(extend='excel',
+                   #                     filename = 'cellLineInfo'),
+                   #                list(extend='pdf',
+                   #                     filename= 'cellLineInfo')),
                    columnDefs = list(
                      list(visible = FALSE, targets = c(0,2,3,5)),
                      list(orderable = FALSE, className = 'details-control', targets = 6)
@@ -92,7 +92,8 @@ var format_datatable = function(d) {
                   'paging': false, 
                   'scrollX': false, 
                   'scrollY': false, 
-                  'searching': false 
+                  'dom': 'tBfrtp',
+                  'searching': false
                   });
                   };
 
@@ -137,7 +138,7 @@ var format_datatable = function(d) {
         selector = "#placeholder",
         where = "beforeBegin",
         ui = tags$div(
-          boxPlus(width = 12,collapsible = T,closable = F,title="Element info:",
+          box(width = 12,collapsible = T,closable = F,title="Element info:",
                   dataTableOutput("tTable")),
           id="regionTab"
         )
@@ -165,7 +166,7 @@ var format_datatable = function(d) {
           selector = "#placeholder",
           where = "afterEnd",
           ui = tags$div(
-            boxPlus(width = 7,title = "TBA info:",collapsible = T,closable = F,
+            box(width = 7,title = "TBA info:",collapsible = T,closable = F,
                     dataTableOutput("tbaTable")),
             id="tbaTab"
           )
@@ -174,7 +175,7 @@ var format_datatable = function(d) {
           selector = "#placeholder",
           where = "beforeBegin",
           ui = tags$div(
-            boxPlus(width = 5,collapsible = T,closable = F,title="Element info:",
+            box(width = 5,collapsible = T,closable = F,title="Element info:",
                     dataTableOutput("tTable"),hr(),
                     dataTableOutput("cellTable")),
             id="regionTab"
@@ -207,7 +208,7 @@ var format_datatable = function(d) {
       selector = "#placeholder",
       where = "beforeBegin",
       ui = tags$div(
-        boxPlus(width = 12,collapsible = T,closable = F,title=title,
+        box(width = 12,collapsible = T,closable = F,title=title,
                 dataTableOutput("tTable"),hr(),
                 dataTableOutput("cellTable")),
         id="regionTab"

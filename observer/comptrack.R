@@ -8,11 +8,11 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
   output$tbaError <- NULL
   output$cellLineError <- NULL
   
-  if(simpleDebug){print(paste0("Search by position: ",clickPos))}
-  if(simpleDebug){print(paste0("Search by gene: ",clickGene))}
+  if(simpleDebug){cat(file=stderr(), paste0("Search by position: ",clickPos,'\n'))}
+  if(simpleDebug){cat(file=stderr(), paste0("Search by gene: ",clickGene,'\n'))}
   # source(file.path("scripts", "tab.R"),  local = TRUE)$value
   # Check the input on the search2 tab and print the error
-  if(simpleDebug){print("Check Conditions")}
+  if(simpleDebug){cat(file=stderr(), paste0("Check Conditions\n"))}
   peak <- length(input$peaks)==0
   regElement <- length(input$regElement)==0
   consensus <- length(input$consensus)==0
@@ -52,11 +52,11 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
   }
   
   if(!any(peak,regElement,consensus,tissue,tba,cellLine)) {
-    if(simpleDebug){print("View genome tab")}
+    if(simpleDebug){cat(file=stderr(), paste0("View genome tab\n"))}
     source(file.path("scripts", "genomeMenu.R"),  local = TRUE)$value
     updateTabItems(session, "sideBar", "genome")
     withProgress(message = 'Generating plot', value = 0, {
-      if(simpleDebug){print("Composite track start")}
+      if(simpleDebug){cat(file=stderr(), "Composite track start\n")}
       incProgress(0.1,detail = "Loading genes/trascripts track")
       
       ##############################################################
@@ -64,34 +64,53 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
         region = input$region
         
         elements <<- convertPosition(region,TRUE)
+        window_load = window2Load(elements)
+        
+        start_geneView = window_load[1]
+        end_geneView = window_load[2]
+        chr_geneView = elements[1]
       }
       if(clickGene){
-        f = AnnotationFilter(~ (symbol == input$genes & chrFilter))
-        gr_tmp <- biovizBase::crunch(EnsDb, f)
+        if(simpleDebug){cat(file=stderr(), paste0(input$genes,'\n'))}
         
-        elements <<- c(seqlevels(gr_tmp),min(start(gr_tmp)),max(end(gr_tmp)))
+        f = AnnotationFilter::AnnotationFilter(~ (symbol == input$genes & chrFilter))
+        # Manage the WASH7P problem (in hg38 this gene is in chr 1 and 12)
+        gr_tmp = tryCatch({
+          biovizBase::crunch(EnsDb, f)
+        }, error = function(e){
+          thisChr = GenomeInfoDb::seqlevelsInUse(ensembldb::genes(EnsDb)[ensembldb::genes(EnsDb)$symbol==input$genes,][1,])
+          biovizBase::crunch(EnsDb, which = ~ symbol == input$genes & AnnotationFilter::AnnotationFilterList(AnnotationFilter::SeqNameFilter("chr1")))
+        })
+        # gr_tmp <- biovizBase::crunch(EnsDb, f)
+        
+        elements <<- c(ensembldb::seqlevels(gr_tmp),min(BiocGenerics::start(gr_tmp)),max(BiocGenerics::end(gr_tmp)))
+        window_load = window2Load(elements)
+        
+        start_geneView = min(BiocGenerics::start(gr_tmp))-increaseWindow
+        end_geneView = max(BiocGenerics::end(gr_tmp))+increaseWindow
+        chr_geneView = ensembldb::seqlevels(gr_tmp)
+
       }
       
-      window_load = window2Load(elements)
-      
       if(input$choice_track=='gene') {
-        if(simpleDebug){print("Load gene track view")}
+        if(simpleDebug){cat(file=stderr(), "Load gene track view\n")}
         # GENE track
-        if(clickPos){
-          start_geneView = window_load[1]
-          end_geneView = window_load[2]
-          chr_geneView = elements[1]
-        }
-        if(clickGene){
-          start_geneView = min(start(gr_tmp))-increaseWindow
-          end_geneView = max(end(gr_tmp))+increaseWindow
-          chr_geneView = seqlevels(gr_tmp)
-        }
-        gene <- genes(EnsDb,
-                      filter=AnnotationFilterList(GeneStartFilter(start_geneView,condition = '>'),
-                                                  GeneEndFilter(end_geneView,condition = '<'),
-                                                  SeqNameFilter(chr_geneView),
-                                                  logicOp = c('&','&')))
+        # if(clickPos){
+        #   start_geneView = window_load[1]
+        #   end_geneView = window_load[2]
+        #   chr_geneView = elements[1]
+        # }
+        # if(clickGene){
+        #   start_geneView = min(start(gr_tmp))-increaseWindow
+        #   end_geneView = max(end(gr_tmp))+increaseWindow
+        #   chr_geneView = ensembldb::seqlevels(gr_tmp)
+        # }
+        
+        gene <- ensembldb::genes(EnsDb,
+                                 filter=AnnotationFilter::AnnotationFilterList(AnnotationFilter::GeneStartFilter(start_geneView,condition = '>'),
+                                                                               AnnotationFilter::GeneEndFilter(end_geneView,condition = '<'),
+                                                                               AnnotationFilter::SeqNameFilter(chr_geneView),
+                                                                               logicOp = c('&','&')))
         
         
         tx <- TnT::FeatureTrack(gene, tooltip = as.data.frame(gene),
@@ -99,36 +118,38 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
                                 color = mapColor[match(gene$gene_biotype,levelsColor)],
                                 #color = TnT::mapcol(gene$gene_biotype, palette.fun = grDevices::rainbow),
                                 background = "#eeeeee",label = NULL)
-      } else {
-        if(simpleDebug){print("Load transcript track view")}
+      }
+      
+      else {
+        if(simpleDebug){cat(file=stderr(), paste0("Load transcript track view\n"))}
         # TRANSCRIPT track
-        if(clickPos){
-          start_transcriptView = window_load[1]
-          end_transcriptView = window_load[2]
-          chr_transcriptView = elements[1]
-        }
-        if(clickGene){
-          start_transcriptView = min(start(gr_tmp))-increaseWindow
-          end_transcriptView = max(end(gr_tmp))+increaseWindow
-          chr_transcriptView = seqlevels(gr_tmp)
-        }
+        # if(clickPos){
+        #   start_transcriptView = window_load[1]
+        #   end_transcriptView = window_load[2]
+        #   chr_transcriptView = elements[1]
+        # }
+        # if(clickGene){
+        #   start_transcriptView = min(start(gr_tmp))-increaseWindow
+        #   end_transcriptView = max(end(gr_tmp))+increaseWindow
+        #   chr_transcriptView = ensembldb::seqlevels(gr_tmp)
+        # }
         
         gr <- biovizBase::crunch(EnsDb,
-                                 GRanges(chr_transcriptView,IRanges(start_transcriptView,end_transcriptView)))
+                                 GenomicRanges::GRanges(chr_geneView,IRanges::IRanges(start_geneView,end_geneView)))
         tx <- TnT::TxTrackFromGRanges(gr, color = "grey2",label = NULL,background = "#eeeeee")
-        trackData(tx)$tooltip <- select(EnsDb,
+        TnT::trackData(tx)$tooltip <- ensembldb::select(EnsDb,
                                         keys = tx$tooltip$tx_id,
                                         keytype = "TXID",
                                         columns = c("GENEID", "SYMBOL", "TXBIOTYPE"))
-        trackData(tx)$color <- mapColor_tx[match(tx$tooltip$TXBIOTYPE,levelsColor_tx)]
+        TnT::trackData(tx)$color <- mapColor_tx[match(tx$tooltip$TXBIOTYPE,levelsColor_tx)]
         # trackData(tx)$color <- TnT::mapcol(tx$tooltip$TXBIOTYPE)
-        trackData(tx)$display_label <- TnT::strandlabel(
+        TnT::trackData(tx)$display_label <- TnT::strandlabel(
           paste(tx$tooltip$SYMBOL, tx$tooltip$TXBIOTYPE),
-          strand(TnT::trackData(tx)))
+          BiocGenerics::strand(TnT::trackData(tx)))
       }
       
       if(clickGene){
-        elements <<- c(paste0(seqlevelsInUse(gr_tmp)),min(start(gr_tmp)),max(end(gr_tmp)))  
+        elements <<- c(paste0(GenomeInfoDb::seqlevelsInUse(gr_tmp)),min(BiocGenerics::start(gr_tmp)),max(BiocGenerics::end(gr_tmp)))
       }
       
       # TSS track
@@ -145,36 +166,36 @@ observeEvent(c(input$searchSetting,input$searchSetting_bottom), ignoreInit = T,{
       }
       
       ##############################################
-      emptyTrack = TnT::BlockTrack(GRanges(elements[1],IRanges(0,1)),
+      emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
                                    color = "#EEEEEE",background = "#EEEEEE",
                                    height = 12,label=NULL)
       tx = append(emptyTrack,tx)
       incStep = 0.8/length(input$consensus)
       
       if('global' %in% input$consensus) {
-        if(simpleDebug){print("Load global consensus")}
+        if(simpleDebug){cat(file=stderr(), "Load global consensus\n")}
         source(file.path("scripts", "globalConsensus.R"),  local = TRUE)$value
         
         tx = append(tx,tx_gCons)
       }
       if('tissue' %in% input$consensus) {
-        if(simpleDebug){print("Load tissue consensus")}
+        if(simpleDebug){cat(file=stderr(), "Load tissue consensus\n")}
         source(file.path("scripts", "tissueConsensus.R"),  local = TRUE)$value
         
         tx = append(tx,tx_tCons)
       }
       if('cell-line' %in% input$consensus) {
-        if(simpleDebug){print("Load cell-line consensus")}
+        if(simpleDebug){cat(file=stderr(), "Load cell-line consensus\n")}
         source(file.path("scripts", "clineConsensus.R"),  local = TRUE)$value
         
         tx = append(tx,tx_cCons)
       }
       
       
-      trackRendered = TnTBoard(tx,
-                               view.range = GRanges(elements[1],IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
+      trackRendered = TnT::TnTBoard(tx,
+                               view.range = GenomicRanges::GRanges(elements[1],IRanges::IRanges(as.numeric(elements[2]),as.numeric(elements[3]))),
                                use.tnt.genome = T,
-                               coord.range = IRanges(window_load[1],window_load[2]))
+                               coord.range = IRanges::IRanges(window_load[1],window_load[2]))
       track(trackRendered)
     })
     clickPos <<- FALSE

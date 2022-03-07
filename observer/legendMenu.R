@@ -2,7 +2,7 @@ observeEvent(input$sideBar, ignoreInit = T, {
   if(input$sideBar=="genome") {
     output$legendMenu <- renderMenu({
       dropdownBlock(id="legendMenu",badgeStatus = NULL,
-                    icon = icon("sliders"),title="Colours Legend",
+                    icon = icon("sliders-h"),title="Colours Legend",
                     fluidRow(h4(if(input$choice_track=='gene'){"Gene track:"}else{"Transcript track:"},style="color:black;font-weight: bold;width:600px"),
                       HTML(paste0('<style type="text/css">
                             .tg  {border-collapse:collapse;border-spacing:0;color:black}

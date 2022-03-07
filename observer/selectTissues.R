@@ -1,5 +1,5 @@
 # Observer that changes the tissue consensus list based on what is selected
-observeEvent(c(input$consensus,input$peaks), {
+observeEvent(c(input$consensus,input$peaks), ignoreInit = T, {
   tissue = c()
   n = unique(narrow_cell$tissueMapped)
   b = unique(broad_cell$tissueMapped)

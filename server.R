@@ -1,11 +1,15 @@
 server <- function(input, output, session) {
-  if(simpleDebug){print("Start server")}
+  if(simpleDebug){cat(file=stderr(), "Start server\n")}
+  
+  ### modal for choosing 
+  source(file.path("observer", "chooseORG.R"),  local = TRUE)$value
+  
   
   ### Observed events for back button in search tab
   source(file.path("observer", "backButton.R"),  local = TRUE)$value
   ### Observed events for zoom/drag/update on track and update the input field
   source(file.path("observer", "regionUpdate.R"),  local = TRUE)$value
-
+  
   ###############
   ### TOOLTIP ###
   ###############
@@ -29,7 +33,7 @@ server <- function(input, output, session) {
   ################
   ### ASSEMBLY ###
   ################
-  source(file.path("observer","assembly.R"), local = TRUE)$value
+  # source(file.path("observer","assembly.R"), local = TRUE)$value
   
   
   ###############################
@@ -123,10 +127,18 @@ server <- function(input, output, session) {
   )
   
   # Rendering of composite track
-  output$outcomp = renderTnT({
-    if(simpleDebug){print("Rendering...")}
+  output$outcomp = TnT::renderTnT({
+    if(simpleDebug){cat(file=stderr(), "Rendering...\n")}
     track()
   })
   
-
+  showModal(dataModal())
+  shinyjs::hide("loading_page")
+  shinyjs::hide('ok1')
+  shinyjs::hide('ok2')
+  shinyjs::hide('ok3')
+  shinyjs::hide('ok4')
+  checkFolderAssembly()
+  
 }
+

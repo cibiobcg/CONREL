@@ -1,4 +1,4 @@
-observeEvent(input$peaks, {
+observeEvent(input$peaks, ignoreInit = T, {
   # Rendering of the tree for cell-line consensus
   output$tree <- renderTree({
     if(length(input$peaks)==0){
