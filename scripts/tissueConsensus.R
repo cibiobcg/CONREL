@@ -16,7 +16,7 @@ tx_tCons = lapply(1:nrow(loadDF),function(i){
   # tCons = tCons[tCons$V1==elements[1],]
   tCons = system(paste0("tabix ",inputFolder,"consensus/",loadDF[i,1],"Peaks/bgz_tissueConsensus/",as.character(loadDF[i,2])," ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
   tCons = data.frame(do.call(rbind, strsplit(tCons, "\t", fixed=TRUE)))
-  
+  tCons = unique(tCons)
   if(nrow(tCons)==0){
     generateEmptyTrack(elements[1])
   } else {

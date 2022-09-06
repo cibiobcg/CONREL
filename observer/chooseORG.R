@@ -53,7 +53,7 @@ observeEvent(input$mm10,ignoreInit = T, {
                                     p(style="font-size:16px;font-weight:bold;text-align: justify; text-justify: inter-word;",
                                       "The GRCm38 version of CONREL is not fully functional and still in progress. We are generating and upgrading all the data")))
   # tagWorkInProgress <<- tagList(NULL)
-  loadAssemblyData('mm10',session)
+  loadAssemblyData('mm10',session,mouse=T)
   removeModal()
   
 })

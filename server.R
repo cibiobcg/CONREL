@@ -1,6 +1,37 @@
 server <- function(input, output, session) {
   if(simpleDebug){cat(file=stderr(), "Start server\n")}
-  
+  # updateTF <- eventReactive(input$actbtn_unicode,{
+  #   input$unicode
+  # })
+  # update_tfbs_value <- reactiveVal(tfbs_value)
+  # update_tf_value <- reactiveVal(tf_value)
+  # update_cell_value <- reactiveVal(cell_value)
+  # update_cre_value <- reactiveVal(cre_value)
+  # 
+  # output$tfbs_valueRender <- renderValueBox({
+  #   valueBox(width=3,
+  #     update_tfbs_value(tfbs_value),
+  #     "TF DNA-binding sites motifs", color = "yellow", icon = icon("level-down-alt")
+  #   )
+  # })
+  # output$tf_valueRender <- renderValueBox({
+  #   valueBox(width=3,
+  #     update_tf_value(tf_value),
+  #     "Transcription factor", color = "purple", icon = icon("share")
+  #   )
+  # })
+  # output$cell_valueRender <- renderValueBox({
+  #   valueBox(width=3,
+  #     update_cell_value(cell_value),
+  #     "ChIP-seq data", color = "green", icon = icon("signal")
+  #   )
+  # })
+  # output$cre_valueRender <- renderValueBox({
+  #   valueBox(width=3,
+  #     update_cre_value(cre_value),
+  #     "genome regulatory elements", color = "blue", icon = icon("align-center")
+  #   )
+  # })
   ### modal for choosing 
   source(file.path("observer", "chooseORG.R"),  local = TRUE)$value
   

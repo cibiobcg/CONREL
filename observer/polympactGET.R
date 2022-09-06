@@ -28,7 +28,7 @@ observe({
       if(length(res_rsPos)==1){
         snpWindow = 50
         res_rsPos = strsplit(res_rsPos,'\t')[[1]]
-        chr_poly = as.integer(res_rsPos[1])
+        chr_poly = res_rsPos[1]
         pos_poly = as.integer(res_rsPos[2])
         
         

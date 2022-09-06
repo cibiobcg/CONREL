@@ -35,6 +35,10 @@ if(simpleDebug){cat(file=stderr(), paste0('start globalFile\n'))}
 df_tooltip = NULL
 df_tba = NULL
 df_cell = NULL
+# tfbs_value = "0"
+# tf_value = "0"
+# cell_value = "0"
+# cre_value = "0"
 
 trackOut = TnT::BlockTrack(GenomicRanges::GRanges("chr1",IRanges::IRanges(0,1)),
                            color = "#EEEEEE",background = "#EEEEEE",
@@ -149,458 +153,6 @@ dataModal <- function(failed = FALSE) {
 }
 
 if(simpleDebug){cat(file=stderr(), paste0('step3 globalFile\n'))}
-
-###################################################################################
-# With global <<- assignment
-loadAssemblyData_old <- function(assembly,session,mouse=F) {
-  if(simpleDebug){cat(file=stderr(), paste0("Load...",assembly,'\n'))}
-  
-  removeUI(
-    ## pass in appropriate div id
-    selector = '#logo-lg'
-  )
-  removeUI(
-    ## pass in appropriate div id
-    selector = '#logo-sq'
-  )
-  
-  if(simpleDebug){cat(file=stderr(), paste0('Preparation parameters and functions\n'))}
-  shinyjs::show("ok1")
-  
-  base_path <<- paste0("/CONREL_Data/",assembly,"/")
-  encodeFolder <<- paste0("/CONREL_Data/",assembly,"/consensus/")
-  inputFolder <<- paste0("/CONREL_Data/",assembly,"/")
-  TBA_folder <<- paste0("/CONREL_Data/",assembly,"/")
-  hg19 <<- fread(paste0(inputFolder,"data/",assembly,".chrom.bed"),data.table = F)
-  hg_assembly <<- assembly
-  
-  if(assembly=='hg19') {
-    EnsDb <<- EnsDb.Hsapiens.v75::EnsDb.Hsapiens.v75
-    regionEx1 <<- 'chrX:66,764,465-66,950,461'
-    regionEx2 <<- 'chr19:51,353,417-51,367,543'
-  } else if(assembly=='hg38') {
-    EnsDb <<- EnsDb.Hsapiens.v86::EnsDb.Hsapiens.v86
-    regionEx1 <<- 'chrX:67,545,147-67,694,722'
-    regionEx2 <<- 'chr19:50,849,918-50,863,080'
-  } else if(assembly=='mm10') {
-    EnsDb <<- EnsDb.Mmusculus.v79::EnsDb.Mmusculus.v79
-    regionEx1 <<- 'chrX:98,149,782-98,316,880'
-    regionEx2 <<- 'chr6:125,157,240-125,171,081'
-    
-  }
-  
-  
-  # In order to improve the shiny load time, the data and functions are precomputed and stored into a RData file
-  # load("./global_v2021.RData")
-  ###############
-  encodeFolder <<- paste0(base_path,"consensus/")
-  TBA_folder <<- base_path
-  defaultGene <<- "BRCA2"
-  elements <<- c("chr7","139,424,940","141,784,100")
-  
-  annot <<- new.env()
-  load(paste0(inputFolder,"data/MasterMotifs_20181017.RData"),envir = annot)
-  
-  # Increase the windows by 1M before end after the selection (if it is possible, or max at the chr limits)
-  increaseWindow <<- 1000000
-  window2Load <<- function(elements){
-    c(if(as.numeric(elements[2])-increaseWindow>0){as.numeric(elements[2])-increaseWindow}else{1},
-      if(as.numeric(elements[3])+increaseWindow>as.numeric(hg19[hg19$V1==elements[1],3])){as.numeric(hg19[hg19$V1==elements[1],3])}else{as.numeric(elements[3])+increaseWindow})
-  }
-  
-  
-  # It converts the input regions in numeric removing the commas
-  convertPosition <<- function(input,v=TRUE){
-    if(v){
-      input <- strsplit(input,":|-")[[1]]
-    }
-    input[2] <- as.numeric(gsub(",","",input[2]))
-    input[3] <- as.numeric(gsub(",","",input[3]))
-    return(input)
-  }
-  
-  
-  # Check the availability of tissue consensus for narrow and broad peak
-  tissueAvailability <<- function(tissue,peaks,regElement) {
-    r = lapply(peaks,function(p){
-      regElement=gsub("active enhancer","active",regElement)
-      listFiles = list.files(paste0(encodeFolder,p,"Peaks/bgz_tissueConsensus"),
-                             pattern = paste(paste0("(",paste(tissue,collapse = "|"),")"),
-                                             paste0("(",paste(regElement,collapse = "|"),")"),
-                                             "union",
-                                             sep = "."))
-      listFiles = listFiles[-grep(".tbi",listFiles)]
-      if(length(listFiles)>0){
-        data.frame(p,listFiles)
-      }
-    })
-    return(as.data.frame(do.call(rbind,r)))
-  }
-  
-  # The function returns the name of the cell-line selected in the tree
-  extractCellline <<- function(cellList){
-    unlist(lapply(cellList,function(x){
-      if(list.depth(x)==3) {
-        names(x[[1]][[1]])
-      }
-    }))
-  }
-  
-  # Check the availability of tissue consensus for narrow and broad peak
-  celllineAvailability <<- function(cellList,peaks,regElement) {
-    cellline = extractCellline(cellList)
-    r = lapply(peaks,function(p){
-      regElement=gsub("active enhancer","active",regElement)
-      listFiles = list.files(paste0(encodeFolder,p,"Peaks/bgz_consensus"),
-                             pattern = paste(paste0("(",paste(cellline,collapse = "|"),")"),
-                                             "intersect",
-                                             paste0("(",paste(regElement,collapse = "|"),")"),
-                                             sep = "."))
-      listFiles = listFiles[-grep(".tbi",listFiles)]
-      if(length(listFiles)>0){
-        data.frame(p,listFiles)
-      }
-    })
-    return(as.data.frame(do.call(rbind,r)))
-  }
-  
-  # The function returns the files (combination of, in a DF) for global consensus selected by user
-  mappingInput <<- function(consensus,peaks) {
-    consensus = gsub("active enhancer","active",consensus)
-    combFolder = expand.grid(peaks,consensus)
-    return(combFolder)
-  }
-  
-  if(simpleDebug){cat(file=stderr(), paste0('Load files mapping cell-lines, tissues, etc...\n'))}
-  shinyjs::show("ok2")
-  # TISSUES consensus for all ENCODE (the list in the bcglab DB)
-  mapping <<- fread(paste0(inputFolder,"consensus/mapping_cellLines.csv"),data.table = F)
-  mapping$name <<- gsub("'","",mapping$name)
-  mapping$name <<- gsub(" ","_",mapping$name)
-  mapping$name <<- gsub("/","_",mapping$name)
-  mapping$tissue <<- gsub(" ","_",mapping$tissue)
-  
-  tissue <<- sort(unique(mapping$tissue))
-  tissueOG <<- tissue[-grep("/",tissue)]
-  
-  # CELL-LINES consensus (list of cell-lines available) for narrow and broad peaks
-  narrow_cell <<- fread(paste0(inputFolder,"consensus/narrowPeaks/dataTableNoReplicates.tsv"),data.table = F)
-  narrow_cell$Biosample.term.name <<- gsub(" ","_",narrow_cell$Biosample.term.name)
-  narrow_cell$tissueMapped <<- mapping[match(narrow_cell$Biosample.term.name,mapping$name),"tissue"]
-  narrow_cell <<- unique(narrow_cell[,c("Biosample.term.name","tissueMapped")])
-  idx <<- grep("/",narrow_cell$tissueMapped)
-  split_multiTissue <<- strsplit(narrow_cell[idx,2],"/")
-  res <<- lapply(1:length(split_multiTissue),function(x){
-    data.frame(Biosample.term.name=narrow_cell[idx[x],1],tissueMapped=split_multiTissue[[x]])
-  })
-  narrow_cell <<- rbind(narrow_cell[-idx,],do.call(rbind,res))
-  
-  broad_cell <<- fread(paste0(inputFolder,"consensus/broadPeaks/dataTableNoReplicates.tsv"),data.table = F)
-  broad_cell$Biosample.term.name <<- gsub(" ","_",broad_cell$Biosample.term.name)
-  broad_cell$tissueMapped <<- mapping[match(broad_cell$Biosample.term.name,mapping$name),"tissue"]
-  broad_cell <<- unique(broad_cell[,c("Biosample.term.name","tissueMapped")])
-  idx <<- grep("/",broad_cell$tissueMapped)
-  split_multiTissue <<- strsplit(broad_cell[idx,2],"/")
-  res <<- lapply(1:length(split_multiTissue),function(x){
-    data.frame(Biosample.term.name=broad_cell[idx[x],1],tissueMapped=split_multiTissue[[x]])
-  })
-  broad_cell <<- rbind(broad_cell[-idx,],do.call(rbind,res))
-  
-  
-  
-  generateEmptyTrack <<- function(chr){
-    return(TnT::BlockTrack(GenomicRanges::GRanges(chr,IRanges::IRanges(0,1)),
-                           color = "#EEEEEE",background = "#EEEEEE",
-                           height = 15,label=NULL))
-  }
-  
-  
-  
-  checkValidRegion <<- function(region) {
-    elements <<- convertPosition(region,TRUE)
-    window_load <<- window2Load(elements)
-    start_geneView <<- window_load[1]
-    end_geneView <<- window_load[2]
-    chr_geneView <<- elements[1]
-    gene <<- ensembldb::genes(EnsDb,
-                              filter=AnnotationFilter::AnnotationFilterList(AnnotationFilter::GeneStartFilter(start_geneView,condition = '>'),
-                                                                            AnnotationFilter::GeneEndFilter(end_geneView,condition = '<'),
-                                                                            AnnotationFilter::SeqNameFilter(chr_geneView),
-                                                                            logicOp = c('&','&')))
-    return(length(gene)==0)
-  }
-  
-  consensusColor <<- function(consensus,peak){
-    if(consensus=='promoter'){
-      if(peak=='narrow'){
-        return('darkorange')
-      } else {
-        return('darkorange4')
-      }
-    } else if(consensus=='enhancer'){
-      if(peak=='narrow'){
-        return('royalblue')
-      } else {
-        return('royalblue4')
-      }
-    } else if(consensus=='active'){
-      if(peak=='narrow'){
-        return('springgreen')
-      } else {
-        return('springgreen4')
-      }
-    } else {
-      return('black')
-    }
-  }
-  
-  list.depth <<- function(this, thisdepth = 0) {
-    # http://stackoverflow.com/a/13433689/1270695
-    if(!is.list(this)) {
-      return(thisdepth)
-    } else {
-      return(max(unlist(lapply(this, list.depth, thisdepth = thisdepth+1))))
-    }
-  }
-  
-  if(simpleDebug){cat(file=stderr(), paste0('Load SNPs, TSSs, TBAs, etc..\n'))}
-  shinyjs::show("ok3")
-  ### COUNT PFM ###
-  load(paste0(inputFolder,"data/countPFMS_v2.RData"))
-  pfms <<- pfms
-  countPFMS <<- countPFMS
-  minCount <<- 50
-  
-  
-  loadSNPs <<- function(elements,window_load){
-    snps.filtered = system(paste0("tabix ",inputFolder,"dbSNP_v151_hg19/dbSNP_151_hg19_complete_TOPMED_ALL.bed.gz ",gsub("chr","",elements[1]),":",window_load[1],"-",window_load[2]),intern = T)
-    snps.filtered = data.frame(do.call(rbind, strsplit(snps.filtered, "\t", fixed=TRUE)))
-    
-    ir <- IRanges::IRanges(start = as.numeric(as.character(snps.filtered$X2)), width = 1)
-    gpos <- GenomicRanges::GRanges(elements[1], ir)
-    gpos$score <- rep(1,nrow(snps.filtered))
-    snps.filtered$alleles = paste(snps.filtered$X4,snps.filtered$X5,sep=">")
-    gtooltip <- snps.filtered[,c(3,6,7,8)]
-    colnames(gtooltip) = c("rs ID", "1000G MAF", "TOPMED MAF", "Alleles")
-    pt = TnT::PinTrack(gpos,value = gpos$score,color = "black",label = "dbSNP v151", domain = c(0,1), tooltip = gtooltip,background = "#eeeeee")
-    emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
-                                 color = "#EEEEEE",background = "#EEEEEE",
-                                 height = 15,label=NULL)
-    return(append(pt,emptyTrack))
-  }
-  
-  
-  
-  loadTSS <<- function(elements,window_load){
-    tss.filtered = system(paste0("tabix ",inputFolder,"data/UCSC_TSS.bed.gz ",elements[1],":",window_load[1],"-",window_load[2]),intern = T)
-    tss.filtered = data.frame(do.call(rbind, strsplit(tss.filtered, "\t", fixed=TRUE)))
-    
-    ir <- IRanges::IRanges(start = as.numeric(as.character(tss.filtered$X2)), end = as.numeric(as.character(tss.filtered$X3)))
-    gpos <- GenomicRanges::GRanges(elements[1], ir)
-    # gpos$score <- rep(1,nrow(tss.filtered))
-    # snps.filtered$alleles = paste(snps.filtered$X4,snps.filtered$X5,sep=">")
-    gtooltip <- tss.filtered[,c(4,5)]
-    colnames(gtooltip) = c("strand","confScore")
-    pt = TnT::BlockTrack(gpos,color = "black",label = "SwitchGear TSS", tooltip = gtooltip,background = "#eeeeee",
-                    height = 15)
-    emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
-                                 color = "#EEEEEE",background = "#EEEEEE",
-                                 height = 15,label=NULL)
-    return(append(pt,emptyTrack))
-  }
-  
-  
-  map_Ncells <<- fread("/CONREL_Data/hg19/data/mapping_Ncells.csv")
-  map_Ncells_Global <<- data.table(
-    rbind(data.table("peaks"="narrow",
-                     "cre"="promoter",
-                     "count"=sum(map_Ncells$`Narrow peaks`>=1),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=1,3])),
-          data.table("peaks"="narrow",
-                     "cre"="enhancer",
-                     "count"=sum(map_Ncells$`Narrow peaks`>=2),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=2,3])),
-          data.table("peaks"="narrow",
-                     "cre"="active",
-                     "count"=sum(map_Ncells$`Narrow peaks`>=3),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=3,3])),
-          data.table("peaks"="broad",
-                     "cre"="promoter",
-                     "count"=sum(map_Ncells$`Broad peaks`>=1),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=1,5])),
-          data.table("peaks"="broad",
-                     "cre"="enhancer",
-                     "count"=sum(map_Ncells$`Broad peaks`>=2),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=2,5])),
-          data.table("peaks"="broad",
-                     "cre"="active",
-                     "count"=sum(map_Ncells$`Broad peaks`>=3),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=3,5]))
-    ))
-  
-  map_Ncells_Global <<- map_Ncells_Global[, list(cells=list(.SD)), by = list(peaks,cre,count)]
-  for(i in 1:length(map_Ncells_Global$cells)) {
-    colnames(map_Ncells_Global$cells[[i]]) = c("cell line","Number of experiments")
-  }
-  
-  map_Ncells_Tissue <<- lapply(unique(map_Ncells$Tissue),function(x){
-    rbind(data.table("peaks"="narrow",
-                     "cre"="promoter",
-                     "tissue" = x,
-                     "count"=sum(map_Ncells$`Narrow peaks`>=1&map_Ncells$Tissue==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$Tissue==x,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$Tissue==x,3])),
-          data.table("peaks"="narrow",
-                     "cre"="enhancer",
-                     "tissue" = x,
-                     "count"=sum(map_Ncells$`Narrow peaks`>=2&map_Ncells$Tissue==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$Tissue==x,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$Tissue==x,3])),
-          data.table("peaks"="narrow",
-                     "cre"="active",
-                     "tissue" = x,
-                     "count"=sum(map_Ncells$`Narrow peaks`>=3&map_Ncells$Tissue==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$Tissue==x,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$Tissue==x,3])),
-          data.table("peaks"="broad",
-                     "cre"="promoter",
-                     "tissue" = x,
-                     "count"=sum(map_Ncells$`Broad peaks`>=1&map_Ncells$Tissue==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$Tissue==x,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$Tissue==x,5])),
-          data.table("peaks"="broad",
-                     "cre"="enhancer",
-                     "tissue" = x,
-                     "count"=sum(map_Ncells$`Broad peaks`>=2&map_Ncells$Tissue==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$Tissue==x,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$Tissue==x,5])),
-          data.table("peaks"="broad",
-                     "cre"="active",
-                     "tissue" = x,
-                     "count"=sum(map_Ncells$`Broad peaks`>=3&map_Ncells$Tissue==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$Tissue==x,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$Tissue==x,5]))
-    )})
-  map_Ncells_Tissue_bind <<- do.call(rbind,map_Ncells_Tissue)
-  map_Ncells_Tissue_bind <<- map_Ncells_Tissue_bind[map_Ncells_Tissue_bind$count!=0,]
-  map_Ncells_Tissue_table <<- map_Ncells_Tissue_bind[, list(cells=list(.SD)), by = list(peaks,cre,count,tissue)]
-  for(i in 1:length(map_Ncells_Tissue_table$cells)) {
-    colnames(map_Ncells_Tissue_table$cells[[i]]) <<- c("cell line","Number of experiments")
-  }
-  
-  map_Ncells_Cell <<- lapply(unique(map_Ncells$`Cell line`),function(x){
-    rbind(data.table("peaks"="narrow",
-                     "cre"="promoter",
-                     "cell" = x,
-                     "count"=sum(map_Ncells$`Narrow peaks`>=1&map_Ncells$`Cell line`==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$`Cell line`==x,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=1&map_Ncells$`Cell line`==x,3])),
-          data.table("peaks"="narrow",
-                     "cre"="enhancer",
-                     "cell" = x,
-                     "count"=sum(map_Ncells$`Narrow peaks`>=2&map_Ncells$`Cell line`==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$`Cell line`==x,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=2&map_Ncells$`Cell line`==x,3])),
-          data.table("peaks"="narrow",
-                     "cre"="active",
-                     "cell" = x,
-                     "count"=sum(map_Ncells$`Narrow peaks`>=3&map_Ncells$`Cell line`==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$`Cell line`==x,1],
-                                        map_Ncells[map_Ncells$`Narrow peaks`>=3&map_Ncells$`Cell line`==x,3])),
-          data.table("peaks"="broad",
-                     "cre"="promoter",
-                     "cell" = x,
-                     "count"=sum(map_Ncells$`Broad peaks`>=1&map_Ncells$`Cell line`==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$`Cell line`==x,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=1&map_Ncells$`Cell line`==x,5])),
-          data.table("peaks"="broad",
-                     "cre"="enhancer",
-                     "cell" = x,
-                     "count"=sum(map_Ncells$`Broad peaks`>=2&map_Ncells$`Cell line`==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$`Cell line`==x,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=2&map_Ncells$`Cell line`==x,5])),
-          data.table("peaks"="broad",
-                     "cre"="active",
-                     "cell" = x,
-                     "count"=sum(map_Ncells$`Broad peaks`>=3&map_Ncells$`Cell line`==x),
-                     "cells"=data.table(map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$`Cell line`==x,1],
-                                        map_Ncells[map_Ncells$`Broad peaks`>=3&map_Ncells$`Cell line`==x,5]))
-    )})
-  map_Ncells_Cell_bind <<- do.call(rbind,map_Ncells_Cell)
-  map_Ncells_Cell_bind <<- map_Ncells_Cell_bind[map_Ncells_Cell_bind$count!=0,]
-  map_Ncells_Cell_table <<- map_Ncells_Cell_bind[, list(cells=list(.SD)), by = list(peaks,cre,count,cell)]
-  for(i in 1:length(map_Ncells_Cell_table$cells)) {
-    colnames(map_Ncells_Cell_table$cells[[i]]) <<- c("cell line","Number of experiments")
-  }
-  
-  ###############
-  if(simpleDebug){cat(file=stderr(), paste0('Loading Ensembl data!\n'))}
-  shinyjs::show("ok4")
-  ensembldb::seqlevelsStyle(EnsDb) <<- "UCSC"
-  genesEns <<- suppressWarnings(as.data.table(ensembldb::genes(EnsDb,return.type='DataFrame')))
-  genesEns <<- genesEns[genesEns$seq_name%in%paste0('chr',c(1:22,'X','Y','M')),'symbol']
-  allEns <<- ensembldb::genes(EnsDb,columns="gene_biotype",return.type="DataFrame")$gene_biotype
-  allEns_tx <<- ensembldb::genes(EnsDb,columns="tx_biotype",return.type="DataFrame")$tx_biotype
-  levelsColor <<- unique(allEns)
-  levelsColor_tx <<- unique(allEns_tx)
-  #mapColor <- c(grDevices::rainbow(10),grDevices::rainbow(10,start = 0.2),grDevices::rainbow(length(levelsColor)-20,start = 0.4))
-  mapColor <<- grDevices::rainbow(length(levelsColor))
-  c25 <<- c(
-    "#1c86ee", "#E31A1C", "#008b00", "#6A3D9A","#FF7F00", "#d4d4d4", "#ffd700", "#7ec0ee", "#FB9A99", "#90ee90", "#CAB2D6","#FDBF6F",
-    "#b3b3b3", "#eee685", "#b03060", "#ff83fa", "#ff1493", "#0000ff", "#36648b", "#00ced1", "#00ff00", "#8b8b00", "#cdcd00", "#8b4500", "#a52a2a"
-  )
-  mapColor <<- c(c25,c25)[1:length(levelsColor)]
-  mapColor_tx <<- c(c25,c25)[1:length(levelsColor_tx)]
-  
-  tabEns <<- table(allEns)[match(levelsColor,names(table(allEns)))]
-  tabEns_tx <<- table(allEns_tx)[match(levelsColor_tx,names(table(allEns_tx)))]
-  legend_idx <<- order(tabEns,decreasing = T)
-  legend_idx_tx <<- order(tabEns_tx,decreasing = T)
-  
-  colnames(genesEns) <<- c("gene_symbol")
-  chrFilter <<- AnnotationFilter::AnnotationFilterList(AnnotationFilter::SeqNameFilter("chr1"),AnnotationFilter::SeqNameFilter("chr2"),AnnotationFilter::SeqNameFilter("chr3"),AnnotationFilter::SeqNameFilter("chr4"),
-                                     AnnotationFilter::SeqNameFilter("chr5"),AnnotationFilter::SeqNameFilter("chr6"),AnnotationFilter::SeqNameFilter("chr7"),AnnotationFilter::SeqNameFilter("chr8"),
-                                     AnnotationFilter::SeqNameFilter("chr9"),AnnotationFilter::SeqNameFilter("chr10"),AnnotationFilter::SeqNameFilter("chr11"),AnnotationFilter::SeqNameFilter("chr12"),
-                                     AnnotationFilter::SeqNameFilter("chr13"),AnnotationFilter::SeqNameFilter("chr14"),AnnotationFilter::SeqNameFilter("chr15"),AnnotationFilter::SeqNameFilter("chr16"),
-                                     AnnotationFilter::SeqNameFilter("chr17"),AnnotationFilter::SeqNameFilter("chr18"),AnnotationFilter::SeqNameFilter("chr19"),AnnotationFilter::SeqNameFilter("chr20"),
-                                     AnnotationFilter::SeqNameFilter("chr21"),AnnotationFilter::SeqNameFilter("chr22"),AnnotationFilter::SeqNameFilter("chrX"),AnnotationFilter::SeqNameFilter("chrY"),
-                                     AnnotationFilter::SeqNameFilter("chrM"),logicOp = rep(c("|"),24))
-  
-  updateSelectizeInput(session, "genes",
-                       choices = as.character(genesEns$gene_symbol),
-                       server = TRUE,selected = NULL)
-  if(mouse){
-    square_imm = paste0("mus.svg")
-    corner_imm = paste0("mus",assembly,"_corner.png")
-  }else{
-    square_imm = paste0("david.svg")
-    corner_imm = paste0("david",assembly,"_corner.png")
-  }
-  insertUI(
-    selector = ".logo-lg",
-    where = "afterEnd",
-    ui = tagList(div(img(class = "logo-lg", 
-                         id='logo-lg', 
-                         src=corner_imm,
-                         width = "100%", 
-                         height = "auto",
-                         style="float: left;display:inline-block;margin-left:-25px;")),
-                 img(class = "logo-sq", 
-                     id='logo-sq', 
-                     src = square_imm)
-    )
-  )
-  # removeModal()
-  updateTabItems(session, "sideBar", "home")
-  
-  if(simpleDebug){cat(file=stderr(), paste0('End LoadAssembly\n'))}
-}
 
 
 ######### FUNCTIONS
@@ -720,20 +272,48 @@ list.depth <- function(this, thisdepth = 0) {
 }
 # Load the SNPs data
 loadSNPs <- function(elements,window_load){
-  snps.filtered = system(paste0("tabix ",inputFolder,"dbSNP_v151_hg19/dbSNP_151_hg19_complete_TOPMED_ALL.bed.gz ",gsub("chr","",elements[1]),":",window_load[1],"-",window_load[2]),intern = T)
+  snps.filtered = system(paste0("tabix ",inputFolder,"data/dbSNP/dbSNP.vcf.gz ",gsub("chr","",elements[1]),":",window_load[1],"-",window_load[2]),intern = T)
   snps.filtered = data.frame(do.call(rbind, strsplit(snps.filtered, "\t", fixed=TRUE)))
-  
+
   ir <- IRanges::IRanges(start = as.numeric(as.character(snps.filtered$X2)), width = 1)
   gpos <- GenomicRanges::GRanges(elements[1], ir)
   gpos$score <- rep(1,nrow(snps.filtered))
   snps.filtered$alleles = paste(snps.filtered$X4,snps.filtered$X5,sep=">")
-  gtooltip <- snps.filtered[,c(3,6,7,8)]
-  colnames(gtooltip) = c("rs ID", "1000G MAF", "TOPMED MAF", "Alleles")
+  t = strsplit(as.character(snps.filtered$X6),";")
+  r = lapply(t,function(x){
+    ts = strsplit(x,"=")
+    ts = lapply(ts,function(x) append(x,"TRUE"))
+    o = sapply(ts,'[[',2)
+    names(o) = sapply(ts,'[[',1)
+    as.data.frame(t(o))
+  })
+  gtooltip = data.frame(Variations = snps.filtered$alleles,rbindlist(r, fill = TRUE, idcol = F))
+  gtooltip = data.frame(apply(gtooltip,2,function(cols){
+    as.character(cols)
+    cols[is.na(cols)]<-'.'
+    cols
+  }))
+  
   pt = TnT::PinTrack(gpos,value = gpos$score,color = "black",label = "dbSNP v151", domain = c(0,1), tooltip = gtooltip,background = "#eeeeee")
   emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
                                color = "#EEEEEE",background = "#EEEEEE",
                                height = 15,label=NULL)
   return(append(pt,emptyTrack))
+  
+  # snps.filtered = system(paste0("tabix ",inputFolder,"dbSNP_v151_hg19/dbSNP_151_hg19_complete_TOPMED_ALL.bed.gz ",gsub("chr","",elements[1]),":",window_load[1],"-",window_load[2]),intern = T)
+  # snps.filtered = data.frame(do.call(rbind, strsplit(snps.filtered, "\t", fixed=TRUE)))
+  # 
+  # ir <- IRanges::IRanges(start = as.numeric(as.character(snps.filtered$X2)), width = 1)
+  # gpos <- GenomicRanges::GRanges(elements[1], ir)
+  # gpos$score <- rep(1,nrow(snps.filtered))
+  # snps.filtered$alleles = paste(snps.filtered$X4,snps.filtered$X5,sep=">")
+  # gtooltip <- snps.filtered[,c(3,6,7,8)]
+  # colnames(gtooltip) = c("rs ID", "1000G MAF", "TOPMED MAF", "Alleles")
+  # pt = TnT::PinTrack(gpos,value = gpos$score,color = "black",label = "dbSNP v151", domain = c(0,1), tooltip = gtooltip,background = "#eeeeee")
+  # emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
+  #                              color = "#EEEEEE",background = "#EEEEEE",
+  #                              height = 15,label=NULL)
+  # return(append(pt,emptyTrack))
 }
 # Laod the TSS data
 loadTSS <- function(elements,window_load){
@@ -744,8 +324,13 @@ loadTSS <- function(elements,window_load){
   gpos <- GenomicRanges::GRanges(elements[1], ir)
   # gpos$score <- rep(1,nrow(tss.filtered))
   # snps.filtered$alleles = paste(snps.filtered$X4,snps.filtered$X5,sep=">")
-  gtooltip <- tss.filtered[,c(4,5)]
-  colnames(gtooltip) = c("strand","confScore")
+  if(ncol(tss.filtered)<5){
+    gtooltip <- tss.filtered[,c(3,4)]
+    colnames(gtooltip) = c("position","strand")
+  } else {
+    gtooltip <- tss.filtered[,c(3,4,5)]
+    colnames(gtooltip) = c("position","strand","confScore")
+  }
   pt = TnT::BlockTrack(gpos,color = "black",label = "SwitchGear TSS", tooltip = gtooltip,background = "#eeeeee",
                        height = 15)
   emptyTrack = TnT::BlockTrack(GenomicRanges::GRanges(elements[1],IRanges::IRanges(0,1)),
@@ -798,6 +383,33 @@ loadAssemblyData <- function(assembly,session,mouse=F) {
     assign('regionEx2','chr6:125,157,240-125,171,081',.GlobalEnv)
   }
 
+  if(mouse==T){
+    assign('imageExtLink','mgi_logo.gif',.GlobalEnv)
+    assign('extLink',"http://www.informatics.jax.org/marker/",.GlobalEnv)
+    load(paste0(inputFolder,"/data/mapMGIname.RData"),envir = .GlobalEnv)
+    
+    tfbs_value = "2,159"
+    tf_value = "777"
+    cell_value = "690"
+    cre_value = "1 million"
+    # update_tfbs_value(tfbs_value)
+    # update_tf_value(tf_value)
+    # update_cell_value(cell_value)
+    # update_cre_value(cre_value)
+  } else {
+    assign('imageExtLink','geneCard.png',.GlobalEnv)
+    assign('extLink',"https://www.genecards.org/cgi-bin/carddisp.pl?gene=",.GlobalEnv)
+    
+    tfbs_value = "5,424"
+    tf_value = "1,710"
+    cell_value = "1,398"
+    cre_value = "1.5 million"
+    # update_tfbs_value(tfbs_value)
+    # update_tf_value(tf_value)
+    # update_cell_value(cell_value)
+    # update_cre_value(cre_value)
+  }
+  
   assign('increaseWindow',1000000,.GlobalEnv)
   
   shinyjs::show("ok1") 
@@ -812,8 +424,9 @@ loadAssemblyData <- function(assembly,session,mouse=F) {
   
   assign('mapping',mapping,.GlobalEnv)
   assign('tissue',sort(unique(mapping$tissue)),.GlobalEnv)
-  assign('tissueOG',tissue[-grep("/",tissue)],.GlobalEnv)
-  
+  if(length(grep("/",tissue))>0){
+    assign('tissueOG',tissue[-grep("/",tissue)],.GlobalEnv)
+  } else {assign('tissueOG',tissue,.GlobalEnv)}
   
   # CELL-LINES consensus (list of cell-lines available) for narrow and broad peaks
   narrow_cell <- fread(paste0(inputFolder,"consensus/narrowPeaks/dataTableNoReplicates.tsv"),data.table = F)
@@ -821,11 +434,13 @@ loadAssemblyData <- function(assembly,session,mouse=F) {
   narrow_cell$tissueMapped <- mapping[match(narrow_cell$Biosample.term.name,mapping$name),"tissue"]
   narrow_cell <- unique(narrow_cell[,c("Biosample.term.name","tissueMapped")])
   idx <- grep("/",narrow_cell$tissueMapped)
-  split_multiTissue <- strsplit(narrow_cell[idx,2],"/")
-  res <- lapply(1:length(split_multiTissue),function(x){
-    data.frame(Biosample.term.name=narrow_cell[idx[x],1],tissueMapped=split_multiTissue[[x]])
-  })
-  narrow_cell <- rbind(narrow_cell[-idx,],do.call(rbind,res))
+  if(length(idx)>0){
+    split_multiTissue <- strsplit(narrow_cell[idx,2],"/")
+    res <- lapply(1:length(split_multiTissue),function(x){
+      data.frame(Biosample.term.name=narrow_cell[idx[x],1],tissueMapped=split_multiTissue[[x]])
+    })
+    narrow_cell <- rbind(narrow_cell[-idx,],do.call(rbind,res))
+  }
   assign('narrow_cell',narrow_cell,.GlobalEnv)
   
   broad_cell <- fread(paste0(inputFolder,"consensus/broadPeaks/dataTableNoReplicates.tsv"),data.table = F)
@@ -833,11 +448,13 @@ loadAssemblyData <- function(assembly,session,mouse=F) {
   broad_cell$tissueMapped <- mapping[match(broad_cell$Biosample.term.name,mapping$name),"tissue"]
   broad_cell <- unique(broad_cell[,c("Biosample.term.name","tissueMapped")])
   idx <- grep("/",broad_cell$tissueMapped)
-  split_multiTissue <- strsplit(broad_cell[idx,2],"/")
-  res <- lapply(1:length(split_multiTissue),function(x){
-    data.frame(Biosample.term.name=broad_cell[idx[x],1],tissueMapped=split_multiTissue[[x]])
-  })
-  broad_cell <- rbind(broad_cell[-idx,],do.call(rbind,res))
+  if(length(idx)>0){
+    split_multiTissue <- strsplit(broad_cell[idx,2],"/")
+    res <- lapply(1:length(split_multiTissue),function(x){
+      data.frame(Biosample.term.name=broad_cell[idx[x],1],tissueMapped=split_multiTissue[[x]])
+    })
+    broad_cell <- rbind(broad_cell[-idx,],do.call(rbind,res))
+  }
   assign('broad_cell',broad_cell,.GlobalEnv)
   
   shinyjs::show("ok2")
@@ -848,7 +465,7 @@ loadAssemblyData <- function(assembly,session,mouse=F) {
   assign('minCount',50,.GlobalEnv)
   
   
-  map_Ncells <- fread("/CONREL_Data/hg19/data/mapping_Ncells.csv")
+  map_Ncells <- fread(paste0(inputFolder,"data/mapping_Ncells.csv"))
   map_Ncells_Global <- data.table(
     rbind(data.table("peaks"="narrow",
                      "cre"="promoter",

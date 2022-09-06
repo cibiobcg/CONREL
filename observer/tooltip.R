@@ -10,6 +10,7 @@ observeEvent(input$tooltipTable, ignoreInit = T, {
   )
   
   tooltip = input$tooltipTable
+  
   df = data.frame(label = tooltip[names(tooltip)=="label"],
                   value = tooltip[names(tooltip)%in%c("value","value1")])
   idx_typeCRE = grep("^typeCRE",df$label)
@@ -120,16 +121,21 @@ var format_datatable = function(d) {
       res = lapply(rev(1:nrow(df_tba)),function(i) {
         if(df_tba[i,2]!=" ()%"){
           TF_name = lapply(sapply(strsplit(strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],"\\("),"[[",1),function(x)if(grepl("\\|",x)){strsplit(x,"\\|")[[1]][1]}else{x})
+          if(hg_assembly=='mm10'){
+            TF_name_recoded = lapply(TF_name,function(tf){mapGenesMouse[which(mapGenesMouse$mgi_symbol==trimws(tf))[1],"mgi_id"]})
+          } else {
+            TF_name_recoded= TF_name
+          }
           data.frame(p.value = paste0("< ",formatC(as.numeric(gsub("TBA_pvalue.","",df_tba[i,1])), format = "e", digits = 2)),
                      TF_Symbol_and_Code = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][1],"/")[[1]],
-                     ALL_1000GP = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][2],"/")[[1]],
-                     GeneCard = paste0("<a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=",
-                                       TF_name,
+                     TBA_fraction = strsplit(strsplit(as.character(df_tba[i,2]),"%")[[1]][2],"/")[[1]],
+                     GeneCard = paste0("<a target='_blank' href='",extLink,
+                                       TF_name_recoded,
                                        "'>",
-                                       "<img style='width:25px' src='geneCard.png'> ",TF_name,
+                                       "<img style='width:25px' src='",imageExtLink,"'> ",TF_name,
                                        "</a>")
                      )
-        }else{data.frame(p.value="",TF_Symbol_and_Code="",ALL_1000GP="",GeneCard="")}
+        }else{data.frame(p.value="",TF_Symbol_and_Code="",TBA_fraction="",GeneCard="")}
       })
       df_tba = do.call(rbind,res)
       df_tba = df_tba %>% dplyr::mutate(TF_Symbol_and_Code=paste0("<b>",gsub("\\(","</b><br>(",gsub("\\|",", ",TF_Symbol_and_Code))))
@@ -149,16 +155,18 @@ var format_datatable = function(d) {
                        options = list(columnDefs = list(list(
                          targets = c(3), searchable = FALSE
                        )),paging = TRUE,
-                                      searching = TRUE,
-                                      dom = 'tBfrtip',
-                                      buttons = list('copy',
-                                                     list(extend='csv',
-                                                          filename = 'tbaInfo'),
-                                                     list(extend='excel',
-                                                          filename = 'tbaInfo'),
-                                                     list(extend='pdf',
-                                                          filename= 'tbaInfo'))),
-                       )
+                       lengthMenu = list(c(25, 50, 100, -1), c('25', '50', '100', 'All')),
+                       pageLength = 25,
+                       searching = TRUE,
+                       dom = 'Blfrtip',
+                       buttons = list('copy',
+                                      list(extend='csv',
+                                           filename = 'tbaInfo'),
+                                      list(extend='excel',
+                                           filename = 'tbaInfo'),
+                                      list(extend='pdf',
+                                           filename= 'tbaInfo'))),
+    )
     tbaDF(df_tba)
     if(length(idx_tba)>0){
       if(length(input$tba)>0) {
@@ -201,6 +209,8 @@ var format_datatable = function(d) {
   } else {
     if("entrezid"%in%df$label) {
       title = "Element info:"
+    } else if("RSPOS"%in%df$label) {
+      title = "Variant info:"
     } else {
       title = "Region info:"
     }

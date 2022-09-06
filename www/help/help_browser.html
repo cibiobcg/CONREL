@@ -6,63 +6,272 @@ The genome browser window can be navigated. Clicking on a region/variant/gene/tr
 
 <br><br>
 <h4 id="help_fileHeader"><b>Files header</b></h4>
-<h3>Gene/Transcript elements</h3>
+<h4>Gene/Transcript elements</h4>
 <p>
-The headers of the downloaded files are automatically generated based on the <i>Ensembl based annotation package</i> (<a href="https://bioconductor.org/packages/release/data/annotation/html/EnsDb.Hsapiens.v75.html">EnsDb.Hsapiens.v75</a> for GRCh37/hg19 genome assembly and <a href="https://bioconductor.org/packages/release/data/annotation/html/EnsDb.Hsapiens.v86.html">EnsDb.Hsapiens.v86</a> for GRCh38/hg38 genome assembly).
-<br><br>
+The headers of the downloaded files are automatically generated based on the <i>Ensembl based annotation package</i>:
+<ul>
+	<li><a href="https://bioconductor.org/packages/release/data/annotation/html/EnsDb.Hsapiens.v75.html">EnsDb.Hsapiens.v75</a> for GRCh37/hg19 genome assembly</li>
+	<li> <a href="https://bioconductor.org/packages/release/data/annotation/html/EnsDb.Hsapiens.v86.html">EnsDb.Hsapiens.v86</a> for GRCh38/hg38 genome assembly</li>
+	<li> <a href="https://bioconductor.org/packages/release/data/annotation/html/EnsDb.Mmusculus.v79.html">EnsDb.Mmusculus.v79</a> for GrCm38/mm10 genome assembly)</li>
+</ul>
+<br>
 For more information please refer to official documentation at Ensembl portal: <a href="http://www.ensembl.org/info/genome/genebuild/index.html">Gene annotation in Ensembl</a>
 </p>
 <br>
-<h3>Consensus regions</h3>
+<h4><b>Consensus regions</b></h4>
 <p>
 <table>
 <tbody>
 <tr>
-<td>&nbsp;seqnames</td>
-<td>&nbsp;The name of the chromosome</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;seqnames</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;The name of the chromosome</td>
 </tr>
 <tr>
-<td>&nbsp;start</td>
-<td>&nbsp;The starting position of the feature in the chromosome</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;start</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;The starting position of the feature in the chromosome</td>
 </tr>
 <tr>
-<td>&nbsp;end</td>
-<td>&nbsp;The ending position of the feature in the chromosome </td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;end</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;The ending position of the feature in the chromosome </td>
 </tr>
 <tr>
-<td>&nbsp;width</td>
-<td>&nbsp;The size of the region in base-pair (bp)</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;width</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;The size of the region in base-pair (bp)</td>
 </tr>
 <tr>
-<td>&nbsp;strand</td>
-<td>&nbsp;Defines the strand. Either "*" (=no strand) or "+" or "-"</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;strand</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Defines the strand. Either "*" (=no strand) or "+" or "-"</td>
 </tr>
 <tr>
-<td>&nbsp;overlap.referenceDB</td>
-<td>&nbsp;The list of resources that provide an overlap between the consensus region and a regulatory element in the reference resources</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;overlap.referenceDB</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;The list of resources that provide an overlap between the consensus region and a regulatory element in the reference resources</td>
 </tr>
 </tbody>
 </table>
 <br>
-<h3>TBA info</h3>
+<h4><b>TBA info</b></h4>
 <table>
 <tbody>
 <tr>
-<td>&nbsp;p.value</td>
-<td>&nbsp;The p-value selected for the TBA</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;p.value</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;The p-value selected for the TBA</td>
 </tr>
 <tr>
-<td>&nbsp;TF_Symbol_and_Code</td>
-<td>&nbsp;For the specific motif, the gene symbol(s) of the Transcription Factor represented by the motif and 
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;TF_Symbol_and_Code</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;For the specific motif, the gene symbol(s) of the Transcription Factor represented by the motif and 
 in parentheses the ID(s) of the motif</td>
 </tr>
 <tr>
-<td>&nbsp;ALL_1000GP</td>
-<td>&nbsp;the fraction of common alleles among 1,000 Genomes Project individuals that support TFs TBA enrichment</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;TBA_fraction</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;the fraction of common alleles among 1,000 Genomes Project individuals that support TFs TBA enrichment</td>
 </tr>
 <tr>
-<td>&nbsp;GeneCard</td>
-<td>&nbsp;a link out for the geneSymbol to geneCard portal</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;GeneCard</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;a link out for the geneSymbol to geneCard portal</td>
+</tr>
+</tbody>
+</table>
+</p>
+<br><br>
+<h4><b>Variants info</b></h4>
+<p>
+For more info, please have a look at the official documention on dbSNP <a href="https://www.ncbi.nlm.nih.gov/snp/">https://www.ncbi.nlm.nih.gov/snp/</a>
+<table>
+<tbody>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;RS</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;dbSNP ID (i.e. rs number)</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;RSPOS</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Chr position reported in dbSNP</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;RV</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;RS orientation is reversed</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;VP</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Variation Property.  Documentation is at ftp://ftp.ncbi.nlm.nih.gov/snp/specs/dbSNP_BitField_latest.pdf</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;GENEINFO</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Pairs each of gene symbol:gene id.  The gene symbol and id are delimited by a colon (:) and each pair is delimited by a vertical bar (|)</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;dbSNPBuildID</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;First dbSNP Build for RS</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;SAO</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Variant Allele Origin: 0 - unspecified, 1 - Germline, 2 - Somatic, 3 - Both</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;SSR</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Variant Suspect Reason Codes (may be more than one value added together) 0 - unspecified, 1 - Paralog, 2 - byEST, 4 - oldAlign, 8 - Para_EST, 16 - 1kg_failed, 1024 - other</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;WGT</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Weight, 00 - unmapped, 1 - weight 1, 2 - weight 2, 3 - weight 3 or more</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;VC</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Variation Class</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;PM</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Variant is Precious(Clinical,Pubmed Cited)</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;TPA</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Provisional Third Party Annotation(TPA) (currently rs from PHARMGKB who will give phenotype data)</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;PMC</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Links exist to PubMed Central article</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;S3D</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has 3D structure - SNP3D table</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;SLO</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has SubmitterLinkOut - From SNP->SubSNP->Batch.link_out</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;NSF</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has non-synonymous frameshift A coding region variation where one allele in the set changes all downstream amino acids. FxnClass = 44</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;NSM</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has non-synonymous missense A coding region variation where one allele in the set changes protein peptide. FxnClass = 42</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;NSN</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has non-synonymous nonsense A coding region variation where one allele in the set changes to STOP codon (TER). FxnClass = 41</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;REF</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has reference A coding region variation where one allele in the set is identical to the reference sequence. FxnCode = 8</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;SYN</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has synonymous A coding region variation where one allele in the set does not change the encoded amino acid. FxnCode = 3</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;U3</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;In 3' UTR Location is in an untranslated region (UTR). FxnCode = 53</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;U5</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;In 5' UTR Location is in an untranslated region (UTR). FxnCode = 55</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;ASS</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;In acceptor splice site FxnCode = 73</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;DSS</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;In donor splice-site FxnCode = 75</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;INT</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;In Intron FxnCode = 6</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;R3</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;In 3' gene region FxnCode = 13</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;R5</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;In 5' gene region FxnCode = 15</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;OTH</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has other variant with exactly the same set of mapped positions on NCBI refernce assembly.</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;CFL</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has Assembly conflict. This is for weight 1 and 2 variant that maps to different chromosomes on different assemblies.</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;ASP</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Is Assembly specific. This is set if the variant only maps to one assembly</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;MUT</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Is mutation (journal citation, explicit fact): a low frequency variation that is cited in journal and other reputable sources</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;VLD</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Is Validated.  This bit is set if the variant has 2+ minor allele count based on frequency or genotype data.</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;G5A</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;>5% minor allele frequency in each and all populations</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;G5</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;>5% minor allele frequency in 1+ populations</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;HD</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Marker is on high density genotyping kit (50K density or greater).  The variant may have phenotype associations present in dbGaP.</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;GNO</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Genotypes available. The variant has individual genotype (in SubInd table).</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;KGPhase1</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;1000 Genome phase 1 (incl. June Interim phase 1)</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;KGPhase3</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;1000 Genome phase 3</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;CDA</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Variation is interrogated in a clinical diagnostic assay</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;LSD</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Submitted from a locus-specific database</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;MTP</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Microattribution/third-party annotation(TPA:GWAS,PAGE)</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;OM</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Has OMIM/OMIA</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;NOC</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Contig allele not present in variant allele list. The reference sequence allele at the mapped position is not present in the variant allele list, adjusted for orientation.</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;WTD</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Is Withdrawn by submitter If one member ss is withdrawn by submitter, then this bit is set.  If all member ss' are withdrawn, then the rs is deleted to SNPHistory</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;NOV</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Rs cluster has non-overlapping allele sets. True when rs set has more than 2 alleles from different submissions and these sets share no alleles in common.</td>
+</tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;NC</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;Inconsistent Genotype Submission For At Least One Sample</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;CAF</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;An ordered, comma delimited list of allele frequencies based on 1000Genomes, starting with the reference allele followed by alternate alleles as ordered in the ALT column. Where a 1000Genomes alternate allele is not in the dbSNPs alternate allele set, the allele is added to the ALT column. The minor allele is the second largest value in the list, and was previuosly reported in VCF as the GMAF. This is the GMAF reported on the RefSNP and EntrezSNP pages and VariationReporter</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;COMMON</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;RS is a common SNP.  A common SNP is one that has at least one 1000Genomes population with a minor allele of frequency >= 1% and for which 2 or more founders contribute to that minor allele frequency.</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;TOPMED</td>
+<td style="border-bottom: 1px solid grey;border-collapse: collapse;">&nbsp;An ordered, comma delimited list of allele frequencies based on TOPMed, starting with the reference allele followed by alternate alleles as ordered in the ALT column. The TOPMed minor allele is the second largest value in the list.</td>
 </tr>
 </tbody>
 </table>
